@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+
+</head>
+<body>
+    {% include "organization/header.html" %}
+    {% block content %}{% endblock content %}
+    {% include "organization/footer.html" %}
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/alertify.min.js"></script>
+    {% for flashmsg in messages %}
+    <script>
+        alertify.set('notifier','position', 'top-right');
+        {% if flashmsg.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}
+            alertify.message('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            alertify.message('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            alertify.success('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+            alertify.warning('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            alertify.error('{{ flashmsg }}');
+        {% endif %}
+    </script>
+{% endfor %}
+</body>
+</html>
