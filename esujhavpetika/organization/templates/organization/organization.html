@@ -1,0 +1,26 @@
+<!-- organization_detail.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ organization.name }} Details</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>{{ organization.name }}</h1>
+    <div id="qrcode"></div>
+    <script>
+        // Get the URL from Django context
+        const url = "{{ organization_url }}";
+
+        // Generate QR code
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: url,
+            width: 128,
+            height: 128,
+        });
+    </script>
+</body>
+</html>
