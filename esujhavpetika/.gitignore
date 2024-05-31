@@ -1,0 +1,4 @@
+.env
+esujhavvenv/
+migrations/
+__pycache__/
