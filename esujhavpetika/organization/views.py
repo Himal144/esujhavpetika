@@ -5,10 +5,18 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate , login , logout 
 from .forms import signupform
+from django.db.models import Count
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .utils import send_email_to_client
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
 from .models import Organization
+from django.contrib.auth.decorators import login_required
+from .models import *
+from user.models import Sender
 
 def organization_detail(request, id):
     organization = get_object_or_404(Organization, id=id)
@@ -32,7 +40,7 @@ def login_form(request):
             if user is not None:
                 login(request, user)
                 messages.success(request,"Logged in successfully")
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/feedback")
              
     else:
         fm = AuthenticationForm()
@@ -59,3 +67,91 @@ def user_logout(request):
     logout(request)
     messages.warning(request,"Log out succefully")
     return HttpResponseRedirect('/')
+
+@login_required
+def feedback(request):
+    user=get_object_or_404(User, id=request.user.id)
+    try:
+        organization=get_object_or_404(Organization,user=user)
+    except organization.DoesNotExist:
+        organization=None    
+    if (organization):
+            feedbacks_by_topic = Feedback.objects.filter(organization_id=organization) \
+                                             .values('topic_id') \
+                                             .annotate(feedback_count=Count('id')) \
+                                             .order_by('-feedback_count')
+            if feedbacks_by_topic.exists():
+                feedback_context={}
+                for topic_feedback in feedbacks_by_topic:
+                    topic_id = topic_feedback['topic_id']
+                    topic_name = Topic.objects.get(id=topic_id).topic
+                    feedbacks = Feedback.objects.filter(organization_id=organization, topic_id=topic_id)
+                    feedback_list = []
+                    for feedback in feedbacks:
+                        similarity_count=Similarity.objects.filter(feedback_id=feedback.id).count()
+                        feedback_list.append({
+                    'id':feedback.id,        
+                    'feedback': feedback.feedback,
+                    'date': feedback.date,
+                    'sender': feedback.sender_id,
+                    'status': feedback.status,
+                    'similarity_count':similarity_count
+                    })
+
+                    feedback_context[topic_name] = feedback_list
+                return render(request,'organization/feedback.html',{"feedback_context":feedback_context})
+            return render(request,'organization/feedback.html',{"feedback_context":{}})         
+                # Retrieve the feedbacks for this specific topic
+                
+@csrf_exempt      
+def handle_feedback_action(request):
+    if request.method=='POST':
+        
+        try:
+            data = json.loads(request.body)
+            feedback_id = data.get('feedback_id')
+            dropdown_clicked_id = int(data.get('dropdown_clicked_id'))
+
+            response_message = data.get('response')
+            #Code to handle the solved of the problem
+            if dropdown_clicked_id == 0:
+                feedback_obj=Feedback.objects.get(id=feedback_id)
+                feedback_obj.status=True
+                feedback_obj.save()
+                #Code to send the email
+                subject="Feedback response"
+                message="Your feedback is solved "
+
+                sender_id_list=Similarity.objects.filter(feedback_id=feedback_id).values('sender_id')
+                recipient_list=[]
+                for sender in sender_id_list:
+                    sender_obj=Sender.objects.get(id=sender["sender_id"])
+                    sender_email=sender_obj.email
+                    recipient_list.append(sender_email)
+                    
+                #send_email_to_client function is in the utils.py file
+                send_email_to_client(subject,message,recipient_list)
+               
+
+
+            #Code to handle the unable to solve 
+            elif dropdown_clicked_id == 1:
+                feedback_obj=Feedback.objects.get(id=feedback_id)
+                feedback_obj.status=False
+                feedback_obj.save()
+                #code to send the email
+            #Cod to handle the forward the feedback to the parent
+            elif dropdown_clicked_id == 2:
+                print("done")
+                forward=Forward()
+                forward.feedback_id=Feedback.objects.get(id=feedback_id)
+                forward.organization_id=Organization.objects.get(user=request.user)
+                forward.save()
+                
+            return JsonResponse({'status': 'success', 'message': 'Response send successfully'})
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)

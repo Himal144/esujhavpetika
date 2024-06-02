@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css"/>
 <!-- Default theme -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
+{% block css%}{% endblock css%}
 
 </head>
 <body>
@@ -36,5 +37,6 @@
         {% endif %}
     </script>
 {% endfor %}
+{% block javascript%}{% endblock javascript%}
 </body>
 </html>

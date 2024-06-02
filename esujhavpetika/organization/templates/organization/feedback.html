@@ -1,0 +1,61 @@
+{% extends 'organization/base.html' %}
+{% load static%}
+{% load custom_filters %}
+{% block css%}
+<link rel="stylesheet" href="{% static 'organization/css/feedback.css'%}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+{% endblock css%}
+
+{% block content %}
+<div class="feedback-container">
+    {% if feedback_context %}
+        {% for topic, feedbacks in feedback_context.items %}
+            <div class="topic-container">
+                <h2>{{ topic }}</h2>
+                {% for feedback in feedbacks %}
+                    <div class="feedback-item"  data-feedback-id="{{feedback.id}}">
+                        <span>{{ feedback.feedback }}</span>
+                        <span class="feedback-time">{{ feedback.date|custom_timesince}}</span>
+                        {% if feedback.similarity_count > 1 %}
+                        <span class="feedback-others">+{{ feedback.similarity_count }} others</span>
+                        {% endif %}
+                        <div class="dropdown">
+                            <i class="fas fa-ellipsis-h dropdown-icon"></i>
+                            <div class="dropdown-content">
+                                <a  class="dropdown-item" dropdown-clicked-id="0">Solved</a>
+                                <a  class="dropdown-item" dropdown-clicked-id="1">Unable to solve</a>
+                                <a  class="dropdown-item" dropdown-clicked-id="2">Forward</a>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No feedback found.</p>
+    {% endif %}
+</div>
+
+
+<!-- Modal HTML -->
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Provide your response</h2>
+        <p>Type your message:</p>
+        <textarea id="feedbackMessage" rows="4" cols="50"></textarea>
+        <button id="submitFeedback">Submit</button>
+    </div>
+</div>
+{% endblock content %}
+{% block javascript %}
+<script src="{% static 'organization/js/feedback.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+
+
+
+</script>
+
+{% endblock javascript%}

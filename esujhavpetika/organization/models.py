@@ -10,9 +10,6 @@ class Organization(models.Model):
     parent_id=models.IntegerField(null=True)
     authenticated_sender=models.BooleanField(default=False)
 
-
- 
-
 class Topic(models.Model):
     topic=models.CharField(max_length=20,null=False)
     organization_id=models.ForeignKey('Organization', on_delete=models.CASCADE)
