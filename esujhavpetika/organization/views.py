@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponseRedirect 
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate , login , logout 
-from .forms import signupform
+from .forms import signupform , organization_register_form
+ 
+
+from . models import Organization
 
 # Create your views here.
 from django.shortcuts import render, get_object_or_404
@@ -20,7 +23,9 @@ def organization_detail(request, id):
     return render(request, 'organization/organization.html', context)
 
 def baseapp (request):
-    return render(request,'organization/base.html')
+    return render(request,'organization/home.html')
+
+
 
 def login_form(request):
     if request.method == 'POST':
@@ -31,8 +36,7 @@ def login_form(request):
             user = authenticate(username=uname, password=upass)
             if user is not None:
                 login(request, user)
-                messages.success(request,"Logged in successfully")
-                return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/organization/register")
              
     else:
         fm = AuthenticationForm()
@@ -59,3 +63,49 @@ def user_logout(request):
     logout(request)
     messages.warning(request,"Log out succefully")
     return HttpResponseRedirect('/')
+
+ 
+
+def organization_register(request):
+    try:
+        organization = Organization.objects.get(user=request.user)
+        form = organization_register_form(request.POST, request.FILES, instance=organization)
+    except Organization.DoesNotExist:
+        form = organization_register_form(request.POST, request.FILES)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            organization = form.save(commit=False)
+            organization.user = request.user
+            organization.save()
+            return HttpResponseRedirect('/')
+    else:
+          form = organization_register_form()    
+    
+    return render(request, 'organization/register.html', {'organization_register_form': form})
+
+def multi_department(request):
+    if request.method == 'POST':
+        try:
+            organization = Organization.objects.get(user=request.user)
+            form = organization_register_form(request.POST, request.FILES, instance=organization)
+        except Organization.DoesNotExist:
+            form = organization_register_form(request.POST, request.FILES)
+        
+        if form.is_valid():
+            organization = form.save(commit=False)
+            organization.user = request.user
+            organization.save()
+            return JsonResponse({'success': True})  # Return success response for AJAX
+            
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})  # Return errors for AJAX
+    else:
+        form = organization_register_form()   
+
+    context = {
+        'organization_register_form': form
+    }
+    
+    return render(request, 'organization/multi_department.html', context)

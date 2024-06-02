@@ -1,16 +1,16 @@
 from django.urls import path
 from . import views 
-from .views import organization_detail
+from .views import organization_detail,organization_register,multi_department
 from django.contrib.auth import views as auth_views
  
-
-
 
 urlpatterns = [
     path('organization/<int:id>/', organization_detail, name='organization_detail'),
     path("",views.baseapp, name='baseapp'),
     path("login/",views.login_form, name= "login"),
     path("signup/",views.signup_form , name = "signup"),
+    path('organization/register/', organization_register, name='organization_register'),
+    path('organization/multi_department/',multi_department, name='multi_department'),
 
      #urls for the email reset password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='organization/password_reset.html'),name='password_reset'),
@@ -21,5 +21,3 @@ urlpatterns = [
 
     path("password_reset_complete/", auth_views.PasswordResetCompleteView.as_view(template_name="organization/password_reset_complete.html"),name='password_reset_complete')
     ]
-
-

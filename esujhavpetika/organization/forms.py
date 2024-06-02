@@ -2,6 +2,8 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .models import Organization
+from django.forms import ModelForm
  
  
 class signupform(UserCreationForm):
@@ -17,4 +19,20 @@ class signupform(UserCreationForm):
 			super().__init__(*args,**kwargs)
 			for field in self.fields.values():
 				field.widget.attrs.update({'class':'form-control my-1','placeholder':field.label})
+ 
+ 
+
+class organization_register_form(ModelForm): 
+    class Meta:
+        model = Organization
+        exclude = ['user', 'parent_id']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            if name == 'name':
+                field.widget.attrs.update({'class': 'form-control my-2', 'placeholder': field.label})
+            else:
+                field.widget.attrs.update({'class': 'my-2', 'placeholder': field.label})
+
  
