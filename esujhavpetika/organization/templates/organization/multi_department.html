@@ -1,89 +1,17 @@
 {% extends 'organization/base.html' %}
+{% load static%}
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 py-4 border shadow border-r">
-            <h3 class="text-center mt-4">Register Form</h3>
-            <form id="registerForm" action="{% url 'multi_department' %}" method="post" enctype="multipart/form-data" novalidate>
-                {% csrf_token %}
-                <div id="form-container">
-                    <div class="form-section mb-3" data-index="1">
-                        <h4>Department 1</h4>
-                        {{ organization_register_form.name }}
-                        {{ organization_register_form.name.errors }}
-                        {{ organization_register_form.logo }}<br>
-                        {{ organization_register_form.authenticated_sender.label_tag }}
-                        {{ organization_register_form.authenticated_sender }}
-                    </div> 
-                </div>
-                <div class="text-center mt-3">
-                    <button type="button" class="btn btn-secondary w-100 mb-2" id="cancelButton">Cancel</button>
-                    <button type="button" class="btn btn-info w-100 mb-2" id="nextButton">Next Department</button>
-                    <button type="submit" class="btn btn-success w-100" id="registerButton">Register</button>
-                </div>
-            </form>
-            <hr class="w-100">
-        </div>
+<div class="container mt-5">
+    <h2>Multi-Department Registration</h2>
+    <div id="department-forms-container">
+        <!-- Department forms will be added here -->
     </div>
+    <button class="btn btn-info w-100 my-3" id="add-department-button">Add Department</button>
+    <button class="btn btn-success w-100 my-3" id="register-button">Register</button>
+    <button type="button" class="btn btn-secondary w-100 mb-2" id="cancel-button">Cancel</button>
 </div>
-
-<script>
-document.getElementById('cancelButton').addEventListener('click', function() {
-    window.location.href = "/";
-});
-
-document.getElementById('nextButton').addEventListener('click', function() {
-    var formContainer = document.getElementById('form-container');
-    var index = formContainer.querySelectorAll('.form-section').length + 1;
-
-    var newFormSection = document.createElement('div');
-    newFormSection.className = 'form-section mb-3';
-    newFormSection.setAttribute('data-index', index);
-    newFormSection.innerHTML = `
-        <h4>Department ${index}</h4>
-        <div class="form-group mb-3">
-            <label for="id_name_${index}">Name:</label>
-            <input type="text" name="name_${index}" maxlength="255" required id="id_name_${index}" class="form-control">
-        </div>
-        <div class="form-group mb-3">
-            <label for="id_logo_${index}">Logo:</label>
-            <input type="file" name="logo_${index}" accept="image/*" required id="id_logo_${index}" >
-        </div>
-        <div class="form-group mb-3">
-            <label for="id_authenticated_sender_${index}">Authenticated Sender:</label>
-            <input type="checkbox" name="authenticated_sender_${index}" id="id_authenticated_sender_${index}" class="form-check-input">
-        </div>
-    `;
-    formContainer.appendChild(newFormSection);
-});
-
-document.getElementById('registerForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var form = event.target;
-
-    if (!form.checkValidity()) {
-        form.reportValidity();
-    } else {
-        var formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "/"; // Redirect to the base app or success page
-            } else {
-                alert('Form submission failed: ' + JSON.stringify(data.errors));
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-});
-</script>
-
 {% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'organization/js/multi_department.js' %}"></script>
+{% endblock javascript%}
