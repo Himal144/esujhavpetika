@@ -4,26 +4,20 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate , login , logout 
-<<<<<<< HEAD
 from .forms import signupform
 from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .utils import send_email_to_client
-=======
 from .forms import signupform , organization_register_form
- 
-
 from . models import Organization
->>>>>>> origin/master
-
-# Create your views here.
 from django.shortcuts import render, get_object_or_404
 from .models import Organization
 from django.contrib.auth.decorators import login_required
 from .models import *
 from user.models import Sender
+from datetime import datetime, timedelta
 
 def organization_detail(request, id):
     organization = get_object_or_404(Organization, id=id)
@@ -48,12 +42,7 @@ def login_form(request):
             user = authenticate(username=uname, password=upass)
             if user is not None:
                 login(request, user)
-<<<<<<< HEAD
-                messages.success(request,"Logged in successfully")
-                return HttpResponseRedirect("/feedback")
-=======
                 return HttpResponseRedirect("/organization/register")
->>>>>>> origin/master
              
     else:
         fm = AuthenticationForm()
@@ -81,7 +70,51 @@ def user_logout(request):
     messages.warning(request,"Log out succefully")
     return HttpResponseRedirect('/')
 
-<<<<<<< HEAD
+ 
+
+def organization_register(request):
+    try:
+        organization = Organization.objects.get(user=request.user)
+        form = organization_register_form(request.POST, request.FILES, instance=organization)
+    except Organization.DoesNotExist:
+        form = organization_register_form(request.POST, request.FILES)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            organization = form.save(commit=False)
+            organization.user = request.user
+            organization.save()
+            return HttpResponseRedirect('/')
+    else:
+          form = organization_register_form()    
+    
+    return render(request, 'organization/register.html', {'organization_register_form': form})
+
+def multi_department(request):
+    if request.method == 'POST':
+        try:
+            organization = Organization.objects.get(user=request.user)
+            form = organization_register_form(request.POST, request.FILES, instance=organization)
+        except Organization.DoesNotExist:
+            form = organization_register_form(request.POST, request.FILES)
+        
+        if form.is_valid():
+            organization = form.save(commit=False)
+            organization.user = request.user
+            organization.save()
+            return JsonResponse({'success': True})  # Return success response for AJAX
+            
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})  # Return errors for AJAX
+    else:
+        form = organization_register_form()   
+
+    context = {
+        'organization_register_form': form
+    }
+    
+    return render(request, 'organization/multi_department.html', context)
 @login_required
 def feedback(request):
     user=get_object_or_404(User, id=request.user.id)
@@ -169,7 +202,7 @@ def handle_feedback_action(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
-=======
+
  
 
 def organization_register(request):
@@ -215,4 +248,29 @@ def multi_department(request):
     }
     
     return render(request, 'organization/multi_department.html', context)
->>>>>>> origin/master
+
+ 
+
+
+def dashboard(request):
+    # Dummy data for the dashboard
+    context = {
+        'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
+        'problems_count': 120,
+        'solved_count': 50,
+        'latest_suggestion': {
+            'user': 'David Kharel',
+            'time_ago': '1 Minute Ago',
+            'message': 'There is a problem of water in our school.',
+        },
+        'frequent_suggestions': [
+            {'topic': 'Water', 'time_ago': '2 days ago', 'rating': 5.0, 'votes': 72},
+            {'topic': 'Internet', 'time_ago': '3 days ago', 'rating': 4.0, 'votes': 62},
+            {'topic': 'Class', 'time_ago': '5 days ago', 'rating': 3.0, 'votes': 52},
+        ],
+        'statistics': {
+            'labels': ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            'values': [10, 15, 20, 5],
+        }
+    }
+    return render(request, 'organization/dashboard.html', context)

@@ -1,0 +1,51 @@
+.banner-content {
+    display: flex;
+    align-items: center;  
+    justify-content: center;  
+    text-align: center;  
+}
+
+.image-container img {
+    width: 100%;  
+    height: auto; 
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    background-color: #f8f9fa;
+    height: 100vh;
+    padding: 20px;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+.nav-item .nav-link {
+    color: #333;
+    padding: 10px;
+}
+
+.nav-item .nav-link.active {
+    background: linear-gradient(90deg, #07661d, #5de285, #ffffff);
+    color: #fff;
+}
+
+.main-content, .right-sidebar {
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}
+ 
