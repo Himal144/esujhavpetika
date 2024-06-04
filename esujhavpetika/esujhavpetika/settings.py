@@ -144,3 +144,6 @@ EMAIL_HOST_PASSWORD=config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT=config('EMAIL_PORT')
 ACCOUNT_EMAIL_VERIFICATION='none'
 
+# Celery configuration for asynchronous programming
+
+
