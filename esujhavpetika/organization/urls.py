@@ -12,6 +12,7 @@ urlpatterns = [
     path('organization/register/', organization_register, name='organization_register'),
     path('organization/multi_department/',multi_department, name='multi_department'),
     path('organization/dashboard/', dashboard, name='dashboard'),
+    path('organization/register/multi-department/',multi_department, name='multi_department'),
 
      #urls for the email reset password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='organization/password_reset.html'),name='password_reset'),

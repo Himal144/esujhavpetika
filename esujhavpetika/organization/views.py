@@ -12,12 +12,19 @@ import json
 from .utils import send_email_to_client
 from .forms import signupform , organization_register_form
 from . models import Organization
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+ 
+
+from . models import Organization
+
+# Create your views here.
 from django.shortcuts import render, get_object_or_404
 from .models import Organization
 from django.contrib.auth.decorators import login_required
 from .models import *
 from user.models import Sender
-from datetime import datetime, timedelta
+ 
 
 def organization_detail(request, id):
     organization = get_object_or_404(Organization, id=id)
@@ -70,51 +77,6 @@ def user_logout(request):
     messages.warning(request,"Log out succefully")
     return HttpResponseRedirect('/')
 
- 
-
-def organization_register(request):
-    try:
-        organization = Organization.objects.get(user=request.user)
-        form = organization_register_form(request.POST, request.FILES, instance=organization)
-    except Organization.DoesNotExist:
-        form = organization_register_form(request.POST, request.FILES)
-    
-    if request.method == 'POST':
-        if form.is_valid():
-            organization = form.save(commit=False)
-            organization.user = request.user
-            organization.save()
-            return HttpResponseRedirect('/')
-    else:
-          form = organization_register_form()    
-    
-    return render(request, 'organization/register.html', {'organization_register_form': form})
-
-def multi_department(request):
-    if request.method == 'POST':
-        try:
-            organization = Organization.objects.get(user=request.user)
-            form = organization_register_form(request.POST, request.FILES, instance=organization)
-        except Organization.DoesNotExist:
-            form = organization_register_form(request.POST, request.FILES)
-        
-        if form.is_valid():
-            organization = form.save(commit=False)
-            organization.user = request.user
-            organization.save()
-            return JsonResponse({'success': True})  # Return success response for AJAX
-            
-        else:
-            errors = form.errors.as_json()
-            return JsonResponse({'success': False, 'errors': errors})  # Return errors for AJAX
-    else:
-        form = organization_register_form()   
-
-    context = {
-        'organization_register_form': form
-    }
-    
-    return render(request, 'organization/multi_department.html', context)
 @login_required
 def feedback(request):
     user=get_object_or_404(User, id=request.user.id)
@@ -202,7 +164,6 @@ def handle_feedback_action(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
-
  
 
 def organization_register(request):
@@ -214,40 +175,106 @@ def organization_register(request):
     
     if request.method == 'POST':
         if form.is_valid():
+            extra_data = request.POST.get('type')
             organization = form.save(commit=False)
             organization.user = request.user
             organization.save()
-            return HttpResponseRedirect('/')
+
+            if extra_data =="single":
+                messages.success(request,"Organizartion register successfully")
+                redirect_url = '/'
+            else:
+                messages.success(request,"Organization register successfully.Please add info of each department.")
+                redirect_url = "/organization/register/multi-department/"    
+
+            return JsonResponse({'redirect_url': redirect_url})
     else:
           form = organization_register_form()    
     
     return render(request, 'organization/register.html', {'organization_register_form': form})
 
+#code for the multi department register form
+@csrf_exempt 
 def multi_department(request):
+  
     if request.method == 'POST':
-        try:
-            organization = Organization.objects.get(user=request.user)
-            form = organization_register_form(request.POST, request.FILES, instance=organization)
-        except Organization.DoesNotExist:
-            form = organization_register_form(request.POST, request.FILES)
-        
-        if form.is_valid():
-            organization = form.save(commit=False)
-            organization.user = request.user
-            organization.save()
-            return JsonResponse({'success': True})  # Return success response for AJAX
-            
-        else:
-            errors = form.errors.as_json()
-            return JsonResponse({'success': False, 'errors': errors})  # Return errors for AJAX
-    else:
-        form = organization_register_form()   
+        department_data = []
+        existing_users = []
 
-    context = {
-        'organization_register_form': form
-    }
+        for key in request.POST:
+            if key.startswith('name_'):
+                index = key.split('_')[1]
+                department = {
+                    'index': index,
+                    'name': request.POST[f'name_{index}'],
+                    'email': request.POST[f'email_{index}'],
+                    'authenticated_sender': request.POST.get(f'authenticated_sender_{index}') == 'true'
+                }
+                department_data.append(department)
+
+        user_credentials = []
+        existing_email = []
+
+        # First pass: Check for existing users
+        for data in department_data:
+            username = data["email"]
+            user = User.objects.filter(username=username).first()
+            if user is not None:
+                existing_email.append({
+                    'index': data['index'],
+                    'email': username
+                })
+
+        # If there are existing users, return the information
+        if existing_email:
+            return JsonResponse({
+                "existing_user": True,
+                "existing_email": existing_email
+            }, status=400)
+
+        # Second pass: Create new users and organizations
+        for data in department_data:
+            username = data["email"]
+            password = get_random_string(8)  # Generate a random 8-character password
+            user_created = False
+
+            if not User.objects.filter(username=username).exists():
+                user = User.objects.create_user(username=username, email=username, password=password)
+                user.save()
+                user_created = True
+                user_credentials.append({
+                    'email': username,
+                    'password': password,
+                    'status': 'User created successfully'
+                })
+
+                # Creating the organization for each user
+                name = data["name"]
+                parent = request.user
+                parent_organization = Organization.objects.get(user=parent)
+                logo = parent_organization.logo
+                authenticated_sender = data["authenticated_sender"]
+                organization = Organization.objects.create(
+                    user=user, 
+                    name=name, 
+                    logo=logo, 
+                    parent_id=parent.id, 
+                    authenticated_sender=authenticated_sender
+                )
+                organization.save()
+            else:
+                user_credentials.append({
+                    'email': username,
+                    'status': 'User already exists',
+                    'index': data['index']
+                })
+
+        return JsonResponse({
+            'message': 'Departments registered successfully',
+            'users': user_credentials
+        }, status=200)
     
-    return render(request, 'organization/multi_department.html', context)
+    return render(request, 'organization/multi_department.html')
 
  
 
