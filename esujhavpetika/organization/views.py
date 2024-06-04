@@ -9,11 +9,12 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .utils import send_email_to_client
 from .forms import signupform , organization_register_form
 from . models import Organization
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
+from .send_email import EmailThread
+from django.template.loader import render_to_string
  
 
 from . models import Organization
@@ -128,8 +129,6 @@ def handle_feedback_action(request):
                 feedback_obj.status=True
                 feedback_obj.save()
                 #Code to send the email
-                subject="Feedback response"
-                message="Your feedback is solved "
 
                 sender_id_list=Similarity.objects.filter(feedback_id=feedback_id).values('sender_id')
                 recipient_list=[]
@@ -137,10 +136,19 @@ def handle_feedback_action(request):
                     sender_obj=Sender.objects.get(id=sender["sender_id"])
                     sender_email=sender_obj.email
                     recipient_list.append(sender_email)
+                    sender_name=sender_obj.name
+                    context={
+                          'name':sender_name,
+                          'feedback':feedback_obj.feedback
+                    }
+
+                    html_content = render_to_string('organization\mail.html', context)
+                    subject = "Suggestion"
+                   
                     
                 #send_email_to_client function is in the utils.py file
-                send_email_to_client(subject,message,recipient_list)
-               
+                    email_thread = EmailThread(subject, html_content, recipient_list)
+                    email_thread.start()
 
 
             #Code to handle the unable to solve 
@@ -149,9 +157,10 @@ def handle_feedback_action(request):
                 feedback_obj.status=False
                 feedback_obj.save()
                 #code to send the email
+
+
             #Cod to handle the forward the feedback to the parent
             elif dropdown_clicked_id == 2:
-                print("done")
                 forward=Forward()
                 forward.feedback_id=Feedback.objects.get(id=feedback_id)
                 forward.organization_id=Organization.objects.get(user=request.user)
