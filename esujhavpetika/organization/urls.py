@@ -5,15 +5,14 @@ from django.contrib.auth import views as auth_views
  
 
 urlpatterns = [
-    path('/<int:id>/', organization_detail, name='organization_detail'),
-    path("",views.baseapp, name='baseapp'),
+    path('<int:id>/', organization_detail, name='organization_detail'),
     path("login/",views.login_form, name= "login"),
     path("logout/",views.user_logout,name="logout"),
     path("signup/",views.signup_form , name = "signup"),
-    path('/register/', organization_register, name='organization_register'),
-    path('/multi_department/',multi_department, name='multi_department'),
-    path('/dashboard/', dashboard, name='dashboard'),
-    path('/register/multi-department/',multi_department, name='multi_department'),
+    path('register/', organization_register, name='organization_register'),
+    path('multi_department/',multi_department, name='multi_department'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('register/multi-department/',multi_department, name='multi_department'),
 
      #urls for the email reset password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='organization/password_reset.html'),name='password_reset'),
@@ -23,6 +22,7 @@ urlpatterns = [
     path('password_reset_confirm/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='organization/password_reset_confirm.html'),name='password_reset_confirm'),
 
     path("password_reset_complete/", auth_views.PasswordResetCompleteView.as_view(template_name="organization/password_reset_complete.html"),name='password_reset_complete'),
-    path('organization/feedback/',views.feedback,name='feedback'),
-    path('handle-feedback-action/',views.handle_feedback_action,name="feedback-action")
+    path('feedback/',views.feedback,name='feedback'),
+    path('handle-feedback-action/',views.handle_feedback_action,name="feedback-action"),
+    path('insights/',views.insights,name='insights')
     ]

@@ -40,7 +40,7 @@ def organization_detail(request, id):
     }
     return render(request, 'organization/organization.html', context)
 
-def baseapp (request):
+def home (request):
     return render(request,'organization/home.html')
 
 
@@ -298,9 +298,11 @@ def dashboard(request):
     organization_obj=Organization.objects.get(user=user_obj)
     organization_child_obj=Organization.objects.filter(parent_id=organization_obj.id)
     if organization_child_obj.exists():
+        print("done")
         #code for the parent organization
         pass
     else:
+       
         #code for the child organization
         latest_suggestion_list=[]
         frequent_suggestions=[]
@@ -350,12 +352,50 @@ def dashboard(request):
         }  
        
     # Dummy data for the dashboard
-    context = {
-        'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
-        'problems_count': problem_count,
-        'solved_count': solved_count,
-        'latest_suggestion':latest_suggestion_list,
-        'frequent_suggestions': frequent_suggestions,
-        'statistics': statistics
-    }
-    return render(request, 'organization/dashboard.html', context)
+        context = {
+            'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
+            'problems_count': problem_count,
+            'solved_count': solved_count,
+            'latest_suggestion':latest_suggestion_list,
+            'frequent_suggestions': frequent_suggestions,
+            'statistics': statistics
+        }
+        return render(request, 'organization/dashboard.html', context)
+
+
+#Code for the Insights
+@login_required
+def insights(request):
+    user_obj=request.user
+    organization_obj=Organization.objects.get(user=user_obj)
+    organization_child_obj=Organization.objects.filter(parent_id=organization_obj.id)
+    if organization_child_obj.exists():
+        for department in organization_child_obj:
+            feedback_obj=Feedback.objects.filter(organization_id=department)
+            total_feedback_count=feedback_obj.count()
+            solved_feedback_count=feedback_obj.filter(status=True).count()
+            department_name=department.name
+            print(department_name)
+            print(total_feedback_count)
+            print(solved_feedback_count)
+        #code for the parent organization
+        pass
+    else:
+        #Code for the child organization
+        feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
+        feedbacks_by_topic = feedback_obj \
+                                             .values('topic_id') \
+                                             .annotate(feedback_count=Count('id')) \
+                                             .order_by('-feedback_count')[:3]
+        
+        for feedback in feedbacks_by_topic:
+            topic_id=feedback['topic_id']
+            topic_name=Topic.objects.get(id=topic_id).topic
+            total_feedback_count=feedback['feedback_count']
+            solved_feedback_count=feedback_obj.filter(topic_id=topic_id,status=True).count()
+            
+
+
+
+        pass
+
