@@ -6,6 +6,14 @@
 {% endblock css%}
 
 {% block content %}
+
+
+{% block sidebar%}
+{% include "organization/sidebar.html" %}
+{% endblock sidebar%}
+{% block main-content%}
+
+<div class="col-md-6 main-content">
 <div class="feedback-container">
     {% if feedback_context %}
         {% for topic, feedbacks in feedback_context.items %}
@@ -47,6 +55,8 @@
         <button id="submitFeedback">Submit</button>
     </div>
 </div>
+</div>
+{% endblock main-content%}
 {% endblock content %}
 {% block javascript %}
 <script src="{% static 'organization/js/feedback.js' %}"></script>

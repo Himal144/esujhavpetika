@@ -11,13 +11,28 @@
 <!-- Default theme -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/themes/default.min.css"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'organization/css/base.css' %}" />
 {% block css%}{% endblock css%}
 
 </head>
 <body>
+  
     {% include "organization/header.html" %}
-    {% block content %}{% endblock content %}
+    {% if request.user.is_authenticated%}
+    <section class="dashboard">
+        <div class="container-fluid">
+            <div class="row">
+                {% endif %}
+    {% block content %}
+    {% block sidebar%}{% endblock sidebar%}
+    {% block main-content%}{% endblock main-content%}
+    {% endblock content %}
     {% include "organization/footer.html" %}
+    {% if request.user.is_authenticated%}
+</div>
+</div>
+</section>
+{% endif %}
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -15,6 +15,10 @@ from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .send_email import EmailThread
 from django.template.loader import render_to_string
+from django.db.models.functions import TruncWeek
+from django.db.models import Count, Q
+from django.utils import timezone
+from datetime import timedelta
  
 
 from . models import Organization
@@ -50,7 +54,7 @@ def login_form(request):
             user = authenticate(username=uname, password=upass)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect("/organization/register")
+                return HttpResponseRedirect("/organization/dashboard")
              
     else:
         fm = AuthenticationForm()
@@ -72,7 +76,7 @@ def signup_form(request):
     else:
         fm = signupform()
         return render(request, 'organization/signup.html', {'signupform': fm})
-
+@login_required
 def user_logout(request):
     logout(request)
     messages.warning(request,"Log out succefully")
@@ -287,26 +291,71 @@ def multi_department(request):
 
  
 
-
+# Code for the dashboard 
+@login_required
 def dashboard(request):
+    user_obj=request.user
+    organization_obj=Organization.objects.get(user=user_obj)
+    organization_child_obj=Organization.objects.filter(parent_id=organization_obj.id)
+    if organization_child_obj.exists():
+        #code for the parent organization
+        pass
+    else:
+        #code for the child organization
+        latest_suggestion_list=[]
+        frequent_suggestions=[]
+        logo_url=organization_obj.logo
+        feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
+        problem_count=feedback_obj.count
+        solved_count=feedback_obj.filter(status=True).count()
+        latest_suggestion_obj=feedback_obj.order_by("-date")[:3]
+        for latest_suggestion in latest_suggestion_obj:
+            sender=latest_suggestion.sender_id
+            suggestion={
+                "user":sender.name,
+                "time":latest_suggestion.date,
+                "feedback":latest_suggestion.feedback
+            }
+            latest_suggestion_list.append(suggestion)
+        feedbacks_by_topic = feedback_obj \
+                                             .values('topic_id') \
+                                             .annotate(feedback_count=Count('id')) \
+                                             .order_by('-feedback_count')[:3]    
+        for feedback in feedbacks_by_topic:
+            topic_obj=Topic.objects.get(id=feedback['topic_id'])
+            topic=topic_obj.topic
+            feedback_obj=Feedback.objects.filter(topic_id=topic_obj,status=None)
+            feedback_count_by_topic=feedback_obj.count()
+            latest_time_obj=feedback_obj.order_by("-date").first()
+            suggestion={
+                'topic':topic,
+                "count":feedback_count_by_topic,
+                "latest_time":latest_time_obj.date
+            }
+            frequent_suggestions.append(suggestion)
+        feedbacks_by_week = feedback_obj.annotate(week=TruncWeek('date')).values('week').annotate(count=Count('id')).order_by('week') 
+        today = timezone.now()
+        start_of_week = today - timedelta(days=today.weekday())
+        
+        weeks = [start_of_week - timedelta(weeks=i) for i in range(4)]
+        week_labels = [f"Week {i+1}" for i in range(4)]
+        week_counts = [
+            feedback_obj.filter(date__gte=weeks[i], date__lt=weeks[i] + timedelta(weeks=1)).count()
+            for i in range(4)
+        ]
+        
+        statistics = {
+            'labels': week_labels,
+            'values': week_counts,
+        }  
+       
     # Dummy data for the dashboard
     context = {
         'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
-        'problems_count': 120,
-        'solved_count': 50,
-        'latest_suggestion': {
-            'user': 'David Kharel',
-            'time_ago': '1 Minute Ago',
-            'message': 'There is a problem of water in our school.',
-        },
-        'frequent_suggestions': [
-            {'topic': 'Water', 'time_ago': '2 days ago', 'rating': 5.0, 'votes': 72},
-            {'topic': 'Internet', 'time_ago': '3 days ago', 'rating': 4.0, 'votes': 62},
-            {'topic': 'Class', 'time_ago': '5 days ago', 'rating': 3.0, 'votes': 52},
-        ],
-        'statistics': {
-            'labels': ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            'values': [10, 15, 20, 5],
-        }
+        'problems_count': problem_count,
+        'solved_count': solved_count,
+        'latest_suggestion':latest_suggestion_list,
+        'frequent_suggestions': frequent_suggestions,
+        'statistics': statistics
     }
     return render(request, 'organization/dashboard.html', context)
