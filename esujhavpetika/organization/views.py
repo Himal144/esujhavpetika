@@ -310,3 +310,26 @@ def dashboard(request):
         }
     }
     return render(request, 'organization/dashboard.html', context)
+
+def insights(request):
+    context = {
+        'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
+        'problems_count': 120,
+        'solved_count': 50,
+        'latest_suggestion': {
+            'user': 'David Kharel',
+            'time_ago': '1 Minute Ago',
+            'message': 'There is a problem of water in our school.',
+        },
+        'frequent_suggestions': [
+            {'topic': 'Water', 'time_ago': '2 days ago', 'rating': 5.0, 'votes': 72},
+            {'topic': 'Internet', 'time_ago': '3 days ago', 'rating': 4.0, 'votes': 62},
+            {'topic': 'Class', 'time_ago': '5 days ago', 'rating': 3.0, 'votes': 52},
+        ],
+        'statistics': {
+            'labels': ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            'values': [10, 15, 20, 5],
+        }
+    }
+     
+    return render(request,'organization/insights.html',context)

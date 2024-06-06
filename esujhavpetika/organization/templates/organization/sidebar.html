@@ -1,0 +1,26 @@
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/style.css' %}" />
+{% endblock %}
+
+<div class="  sidebar">
+    <div class="logo">
+        <img src="{{ logo_url }}" alt="Logo" />
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'insights' %}">Insight</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Settings</a>
+        </li>
+    </ul>
+    <ul class="nav flex-column mt-auto">
+        <li class="nav-item">
+            <a class="nav-link" href=" {% url 'dashboard' %}">Sign Out</a>
+        </li>
+    </ul>
+</div>  

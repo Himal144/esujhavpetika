@@ -1,0 +1,45 @@
+{% extends 'organization/base.html' %} {% load static %} {% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/style.css' %}" />
+{% endblock %} {% block content %}
+<section class="insights">
+  <!-- Include Sidebar -->
+  {% include 'organization/sidebar.html' %}
+  <!-- Main content for insights -->
+  <div class="col-md-9 main-content">
+    <h1>Insights</h1>
+    <div class="statistics mt-3">
+      <div class="card gradient-card">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Statistics</h5>
+          <canvas id="statisticsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %} {% block javascript%}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  var ctx = document.getElementById('statisticsChart').getContext('2d');
+  var statisticsChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: {{ statistics.labels|safe }},
+          datasets: [{
+              label: 'Suggestions',
+              data: {{ statistics.values|safe }},
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+</script>
+{% endblock javascript %}
