@@ -1,0 +1,8 @@
+/* Code for the main content and the right content  */
+.main-content, .right-sidebar {
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}

@@ -1,15 +1,15 @@
-{% load static %}
+{% load static%}
 {% block css %}
-<link rel="stylesheet" href="{% static 'organization/css/style.css' %}" />
-{% endblock %}
-
-<div class="  sidebar">
+<link rel="stylesheet" href="{% static 'organization/css/sidebar.css' %}" />
+{% endblock css %}
+<i id="sidebarToggle" class="fas fa-bars d-md-none" style="font-size: 24px; cursor: pointer;"></i>
+ <div class="col-md-3 sidebar">
     <div class="logo">
         <img src="{{ logo_url }}" alt="Logo" />
     </div>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link active" href="{% url 'dashboard' %}">Dashboard</a>
+            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'insights' %}">Insight</a>
@@ -20,7 +20,11 @@
     </ul>
     <ul class="nav flex-column mt-auto">
         <li class="nav-item">
-            <a class="nav-link" href=" {% url 'dashboard' %}">Sign Out</a>
+            <a class="nav-link" href="#">Sign Out</a>
         </li>
     </ul>
-</div>  
+</div> 
+
+{% block javascript %}
+<script src="{% static 'organization/js/sidebar.js' %}"></script>
+{% endblock javascript%}

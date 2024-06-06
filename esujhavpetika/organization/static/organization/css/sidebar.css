@@ -1,0 +1,43 @@
+/* Existing CSS */
+.sidebar {
+    background-color: #f8f9fa;
+    height: 100vh;
+    padding: 20px;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+}
+
+.nav-item .nav-link {
+    color: #333;
+    padding: 10px;
+}
+
+.nav-item .nav-link.active {
+    background: linear-gradient(90deg, #07661d, #5de285, #ffffff);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    #sidebarToggle {
+        display: block;
+        margin: 10px;
+    }
+}
+
+@media (min-width: 769px) {
+    #sidebarToggle {
+        display: none;
+    }
+}
+
+/* New CSS for active state */
+.nav-item .nav-link.active {
+    background-color: #07661d;
+    color: #fff;
+}

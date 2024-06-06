@@ -5,15 +5,16 @@ from django.contrib.auth import views as auth_views
  
 
 urlpatterns = [
-    path('organization/<int:id>/', organization_detail, name='organization_detail'),
+    path('<int:id>/', organization_detail, name='organization_detail'),
     path("",views.baseapp, name='baseapp'),
     path("login/",views.login_form, name= "login"),
+    path("logout/",views.user_logout,name="logout"),
     path("signup/",views.signup_form , name = "signup"),
-    path('organization/register/', organization_register, name='organization_register'),
-    path('organization/multi_department/',multi_department, name='multi_department'),
-    path('organization/dashboard/', dashboard, name='dashboard'),
-    path('organization/insights', insights , name='insights'),
-    path('organization/register/multi-department/',multi_department, name='multi_department'),
+    path('register/', organization_register, name='organization_register'),
+    path('multi_department/',multi_department, name='multi_department'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('insights/', insights, name='insights'),
+    path('register/multi-department/',multi_department, name='multi_department'),
 
      #urls for the email reset password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='organization/password_reset.html'),name='password_reset'),
