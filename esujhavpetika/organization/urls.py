@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views 
-from .views import organization_detail,organization_register,multi_department,dashboard
+from .views import organization_detail,organization_register,multi_department,dashboard,insights
 from django.contrib.auth import views as auth_views
  
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path('register/', organization_register, name='organization_register'),
     path('multi_department/',multi_department, name='multi_department'),
     path('dashboard/', dashboard, name='dashboard'),
+    path('insights/', insights, name='insights'),
     path('register/multi-department/',multi_department, name='multi_department'),
 
      #urls for the email reset password
@@ -24,5 +25,6 @@ urlpatterns = [
     path("password_reset_complete/", auth_views.PasswordResetCompleteView.as_view(template_name="organization/password_reset_complete.html"),name='password_reset_complete'),
     path('feedback/',views.feedback,name='feedback'),
     path('handle-feedback-action/',views.handle_feedback_action,name="feedback-action"),
-    path('insights/',views.insights,name='insights')
+    path('handle-department-action/',views.handle_department_action,name="department-action")
+    
     ]

@@ -298,9 +298,46 @@ def dashboard(request):
     organization_obj=Organization.objects.get(user=user_obj)
     organization_child_obj=Organization.objects.filter(parent_id=organization_obj.id)
     if organization_child_obj.exists():
-        print("done")
-        #code for the parent organization
-        pass
+        child_ids = organization_child_obj.values_list('id', flat=True)
+        feedback_objs = Feedback.objects.filter(organization_id__in=child_ids)
+        total_count=0
+        solved_count=0
+        latest_suggestion_list=[]
+        frequent_suggestions=[]
+        statistics=[]
+        for feedback in feedback_objs:
+            forward_obj=Forward.objects.filter(feedback_id=feedback)
+            if forward_obj.exists():
+                total_count+=1
+                if feedback.status:
+                    solved_count+=1
+        latest_feedback_obj=feedback_objs.order_by("-date")
+        latest_suggestion_list=[]
+        for latest_feedback in latest_feedback_obj:
+            forward_obj=Forward.objects.filter(feedback_id=latest_feedback)
+            if forward_obj.exists():
+                if  not latest_feedback.status and len(latest_suggestion_list)<=3:
+                    sender=latest_feedback.sender_id
+                    suggestion={
+                        "user":sender.name,
+                        "time":latest_feedback.date,
+                        "feedback":latest_feedback.feedback,
+                        "forward_from":latest_feedback.organization_id.name
+                    }
+                    latest_suggestion_list.append(suggestion)
+
+
+        context = {
+            'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
+            'problems_count': total_count,
+            'solved_count': solved_count,
+            'latest_suggestion':latest_suggestion_list,
+            'frequent_suggestions': frequent_suggestions,
+            'statistics': statistics,
+            'parent':True
+        }
+        return render(request, 'organization/dashboard.html', context)                
+        
     else:
        
         #code for the child organization
@@ -326,7 +363,7 @@ def dashboard(request):
         for feedback in feedbacks_by_topic:
             topic_obj=Topic.objects.get(id=feedback['topic_id'])
             topic=topic_obj.topic
-            feedback_obj=Feedback.objects.filter(topic_id=topic_obj,status=None)
+            feedback_obj=Feedback.objects.filter(topic_id=topic_obj,status=None,organization_id=organization_obj)
             feedback_count_by_topic=feedback_obj.count()
             latest_time_obj=feedback_obj.order_by("-date").first()
             suggestion={
@@ -351,7 +388,7 @@ def dashboard(request):
             'values': week_counts,
         }  
        
-    # Dummy data for the dashboard
+
         context = {
             'logo_url': 'path_to_logo_image',  # Update with the actual path or URL to the logo image
             'problems_count': problem_count,
@@ -370,16 +407,71 @@ def insights(request):
     organization_obj=Organization.objects.get(user=user_obj)
     organization_child_obj=Organization.objects.filter(parent_id=organization_obj.id)
     if organization_child_obj.exists():
+        labels=[]
+        total_feedback=[]
+        solved_feedback=[]
+        departments=[]
         for department in organization_child_obj:
             feedback_obj=Feedback.objects.filter(organization_id=department)
             total_feedback_count=feedback_obj.count()
             solved_feedback_count=feedback_obj.filter(status=True).count()
             department_name=department.name
-            print(department_name)
-            print(total_feedback_count)
-            print(solved_feedback_count)
+            labels.append(department_name)
+            total_feedback.append(total_feedback_count)
+            solved_feedback.append(solved_feedback_count)
+            department={
+            "id":department.id,
+            "name":department.name
+        }
+            departments.append(department)
+          
+        department_double_statistics={
+            "labels":labels,
+            "value_a":total_feedback,
+            "value_b":solved_feedback
+        }
+
+        # Code for sending the department performance for the initial render of the parent_insights.html
+        feedback_obj=Feedback.objects.filter(organization_id=organization_child_obj.first().id)
+        feedbacks_by_topic = feedback_obj \
+                                             .values('topic_id') \
+                                             .annotate(feedback_count=Count('id')) \
+                                             .order_by('-feedback_count')[:3]
+        labels=[]
+        total_feedback=[]
+        solved_feedback=[]
+        for feedback in feedbacks_by_topic:
+            topic_id=feedback['topic_id']
+            topic_name=Topic.objects.get(id=topic_id).topic
+            total_feedback_count=feedback['feedback_count']
+            solved_feedback_count=feedback_obj.filter(topic_id=topic_id,status=True).count()
+            labels.append(topic_name)
+            total_feedback.append(total_feedback_count)
+            solved_feedback.append(solved_feedback_count)
+        statistics={
+              "labels":labels,
+              "values":total_feedback
+        }
+
+        double_statistics={
+            "labels":labels,
+            "value_a":total_feedback,
+            "value_b":solved_feedback
+        }
+        
+        
+        context = {
+        'department_double_statistics':json.dumps(department_double_statistics),
+        'statistics':json.dumps(statistics),
+        'double_statistics':json.dumps(double_statistics),
+        'departments':departments,
+        'department_name':organization_child_obj.first().name
+
+        }
+        
         #code for the parent organization
-        pass
+        return render(request, 'organization/parent_insights.html', context)
+       
     else:
         #Code for the child organization
         feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
@@ -387,15 +479,76 @@ def insights(request):
                                              .values('topic_id') \
                                              .annotate(feedback_count=Count('id')) \
                                              .order_by('-feedback_count')[:3]
-        
+        labels=[]
+        total_feedback=[]
+        solved_feedback=[]
         for feedback in feedbacks_by_topic:
             topic_id=feedback['topic_id']
             topic_name=Topic.objects.get(id=topic_id).topic
             total_feedback_count=feedback['feedback_count']
             solved_feedback_count=feedback_obj.filter(topic_id=topic_id,status=True).count()
-            
+            labels.append(topic_name)
+            total_feedback.append(total_feedback_count)
+            solved_feedback.append(solved_feedback_count)
+        statistics={
+              "labels":labels,
+              "values":total_feedback
+        }
+
+        double_statistics={
+            "labels":labels,
+            "value_a":total_feedback,
+            "value_b":solved_feedback
+        }
+        
+        context = {
+            'statistics': json.dumps(statistics),
+            'double_statistics': json.dumps(double_statistics)
+        }
+        
+
+        return render(request, 'organization/insights.html', context)
+
+#Code to handle the department clicked in the parent_insights        
+@csrf_exempt          
+def handle_department_action(request):
+        data = json.loads(request.body)
+        department_id=data.get("department_id")
+        organization_obj=Organization.objects.get(id=department_id)
+        feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
+        feedbacks_by_topic = feedback_obj \
+                                             .values('topic_id') \
+                                             .annotate(feedback_count=Count('id')) \
+                                             .order_by('-feedback_count')[:3]
+        labels=[]
+        total_feedback=[]
+        solved_feedback=[]
+        for feedback in feedbacks_by_topic:
+            topic_id=feedback['topic_id']
+            topic_name=Topic.objects.get(id=topic_id).topic
+            total_feedback_count=feedback['feedback_count']
+            solved_feedback_count=feedback_obj.filter(topic_id=topic_id,status=True).count()
+            labels.append(topic_name)
+            total_feedback.append(total_feedback_count)
+            solved_feedback.append(solved_feedback_count)
+        statistics={
+              "labels":labels,
+              "values":total_feedback
+        }
+
+        double_statistics={
+            "labels":labels,
+            "value_a":total_feedback,
+            "value_b":solved_feedback
+        }
+        
 
 
-
-        pass
-
+        context = {
+            'statistics': statistics,
+            'double_statistics': double_statistics,
+            'department_name':organization_obj.name
+        }
+       
+        return JsonResponse({"context":context})
+    

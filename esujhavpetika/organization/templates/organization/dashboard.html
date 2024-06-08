@@ -2,104 +2,6 @@
 {% load static %}
 {% load custom_filters %}
 {% block content %}
-{% comment %} <section class="dashboard">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 sidebar">
-                <div class="logo">
-                    <img src="{{ logo_url }}" alt="Logo" />
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Insight</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
-                    </li>
-                </ul>
-                <ul class="nav flex-column mt-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout'%}">Sign Out</a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Main content -->
-            <div class="col-md-6 main-content">
-                <div class="overview">
-                    <div class="card gradient-card">
-                        <div class="card-body">
-                            <h5 class="card-title  text-primary">Overview</h5>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h6>Problems</h6>
-                                    <p>{{ problems_count }}</p>
-                                </div>
-                                <div>
-                                    <h6>Solved</h6>
-                                    <p>{{ solved_count }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="latest-suggestion mt-3">
-                    <div class="card gradient-card">
-                        <div class="card-body">
-                            <h5 class="card-title  text-primary">Latest Suggestion</h5>
-                            {% for latest_suggestion in latest_suggestion%}
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="suggestion-info">
-                                    <p><strong>{{ latest_suggestion.user }}</strong></p>
-                                    <p>{{ latest_suggestion.feedback }}</p>
-                                    <small>{{ latest_suggestion.time|custom_timesince}}</small>
-                                </div>
-                                <button class="button">Reply</button>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right sidebar for frequent suggestions and statistics -->
-            <div class="col-md-3 right-sidebar">
-                <div class="frequent-suggestions">
-                    <div class="card gradient-card">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">Frequent Suggestions</h5>
-                            <ul class="list-group">
-                                {% for suggestion in frequent_suggestions %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p>{{ suggestion.topic }}</p>
-                                        <small>{{ suggestion.latest_time|custom_timesince }}</small>
-                                    </div>
-                                    <span class=" text-success">{{ suggestion.count }}</span>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="statistics mt-3">
-                    <div class="card gradient-card">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">Statistics</h5>
-                            <canvas id="statisticsChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> {% endcomment %}
-
 {% block sidebar%}
 {% include "organization/sidebar.html" %}
 {% endblock sidebar%}
@@ -107,41 +9,19 @@
 {% include "organization/dashboard_content.html" %}
 {% endblock main-content%}
 {% endblock content %}
-
 {% block javascript%}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var ctx = document.getElementById('statisticsChart').getContext('2d');
-    var statisticsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {{ statistics.labels|safe }},
-            datasets: [{
-                label: 'Suggestions',
-                data: {{ statistics.values|safe }},
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+
+  function checkScreenWidth() {
+      if (window.innerWidth < 768) {
+          document.querySelector('.sidebar').style.display = 'none';
+      } else {
+          document.querySelector('.sidebar').style.display = 'block';
+      }
+  }
+  window.addEventListener('resize', checkScreenWidth);
+  window.addEventListener('load', checkScreenWidth);
 </script>
-<script>
-    function checkScreenWidth() {
-        if (window.innerWidth < 768) {
-            document.querySelector('.sidebar').style.display = 'none';
-        } else {
-            document.querySelector('.sidebar').style.display = 'block';
-        }
-    }
-    window.addEventListener('resize', checkScreenWidth);
-    window.addEventListener('load', checkScreenWidth);
-</script>
-{% endblock javascript %}
+
+{% endblock javascript %} 

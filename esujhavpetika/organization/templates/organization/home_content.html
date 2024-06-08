@@ -1,0 +1,23 @@
+{% load static %}
+{% if request.user.is_authenticated%}
+<div class="col-md-9 main-content">
+    {% else %}
+    <div class="col-md-12 main-content">
+        {% endif %}
+<section class="banner">
+    <div class="container">
+       <div class ="row">
+        <div class="banner-content col-md-4 mt-1 py-1">
+            <div class="banner-content">
+                <h3> Empower change with your feedback. Every suggestion counts.</h13>
+            </div>
+
+            <div class="banner-img"></div>
+        </div>
+        <div class="image-container col-md-8 ">
+            <img src="{% static 'organization/Images/banner-img-01.png' %}" alt="banner"  />
+        </div>
+       </div>
+    </div>
+</section>
+</div>
