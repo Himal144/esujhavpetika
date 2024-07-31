@@ -1,0 +1,37 @@
+{% load static%}
+{% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/sidebar.css' %}" />
+{% endblock css %}
+<i id="sidebarToggle" class="fas fa-bars d-md-none " style="font-size: 24px; cursor: pointer; margin-top:58px;"></i>
+ <div class="col-md-3 mt-1 sidebar">
+    <div class="logo mb-4">
+        <img src="{{ logo_url.url }}" alt="Logo" />
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'insights' %}">Insight</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'feedback' %}">Suggestion Box</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'account_settings'%}">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'organization_detail'%}">Details</a>
+        </li>
+        
+         {% if request.user.is_authenticated %}
+        <li class="nav-item">
+           <a class="nav-link" href="/suggestion/{{slug_name}}/{{id}}/">Suggestion form</a>
+        </li>
+        {% endif %} 
+    </ul>
+</div> 
+
+{% block javascript %}
+<script src="{% static 'organization/js/sidebar.js' %}"></script>
+{% endblock javascript%}

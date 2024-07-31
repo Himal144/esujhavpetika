@@ -1,0 +1,86 @@
+{% extends 'organization/base.html' %}
+{% load static %}
+
+{% block content %}
+{% block sidebar %}
+{% include "organization/sidebar.html" %}
+{% endblock sidebar %}
+{% block main-content %}
+<div class="col-md-9">
+
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="statistics">
+            <div class="card gradient-card">
+              <div class="card-body">
+                <h5 class="card-title text-primary text-center"> Department wise performance</h5>
+                <canvas id="departmentDoubleBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <b><h5 class=" pt-5 text-center" > Department details records</h5></b>
+      <div class="form-group">
+        <label for="departmentSelect">Select Department:</label>
+        <select id="departmentSelect" class="form-control">
+            {% for department in departments %}
+            <option class ="option-item" department-clicked-id="{{ department.id }}">{{ department.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <b><h3 class=" text-center" id='department-heading'> </h3></b>
+
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-6 mb-3">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary text-center">Bar Chart</h5>
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary text-center">Pie Chart</h5>
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3 mb-3">
+      <div class="col-md-12">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary text-center">Double Bar Chart</h5>
+              <canvas id="doubleBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main-content %}
+{% endblock content %}
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+  var initialDepartmentDoubleStatistics = JSON.parse('{{ department_double_statistics|escapejs|safe }}');
+  var initialStatistics = JSON.parse('{{ statistics|escapejs|safe }}');
+  var initialDoubleStatistics = JSON.parse('{{ double_statistics|escapejs|safe }}');
+  var initialDepartmentName="{{department_name}}";
+  
+</script>
+<script src="{% static 'organization/js/parent_insights.js' %}"></script>
+{% endblock javascript %}

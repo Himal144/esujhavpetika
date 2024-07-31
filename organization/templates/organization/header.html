@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esujhavpetika</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .header {
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            position:fixed;
+            width:100%;
+            z-index:1;  
+        }
+        .header .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .header .logo-text {
+            font-size: 24px;
+            margin-left: 10px;
+        }
+        .header .right-section {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        .header .right-section .btn {
+            margin-left: 10px;
+        }
+        .header a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="{% url 'home' %}" class="logo-container">
+            <img src="{% static 'organization/Images/logo-icon.png' %}" alt="Logo" height="25" width="36" />
+            <div class="logo-text text-dark">esujhav<b class="text-primary">Petika</b></div>
+        </a>
+        {% if request.user.is_authenticated %}
+        <div class="right-section">
+           <a href="{% url 'organization_detail'%}"> <i class="fa-solid fa-qrcode fa-2xl text-primary mr-4"></i></a>
+            {% if suggestion_box_status == True %}
+            <a href="{% url 'multi_department' %}">
+                <button type="button" class="btn btn-primary">Add department</button>
+            </a>
+            {% elif suggestion_box_status is None %}
+            <a href="{% url 'organization_register' %}">
+                <button type="button" class="btn btn-primary">Suggestion Box</button>
+            </a>
+            {% endif %}
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="ml-auto">
+            <button type="button" class="btn btn-primary">Sign Up / Login</button>
+        </a>
+        {% endif %}
+    </header>
+</body>
+</html>

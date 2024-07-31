@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'organization/css/base.css' %}" />
+{% block css%}{% endblock css%}
+
+</head>
+<body>
+    {% include "organization/header.html" %}
+    {% if request.user.is_authenticated%}
+    <section class="dashboard">
+        <div class="container-fluid">
+            <div class="row">
+                {% endif %}
+    {% block content %}
+    {% block sidebar%}{% endblock sidebar%}
+    {% block main-content%}{% endblock main-content%}
+    {% endblock content %}
+    {% include "organization/footer.html" %}
+    {% if request.user.is_authenticated%}
+</div>
+</div>
+</section>
+{% endif %}
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+    toastr.options.closeButton=true;
+    </script>
+    {% for flashmsg in messages %}
+    <script>
+        toastr.options.positionClass = 'toast-top-right';
+        {% if flashmsg.level == DEFAULT_MESSAGE_LEVELS.DEBUG %}
+            toastr.info('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            toastr.info('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            toastr.success('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+            toastr.warning('{{ flashmsg }}');
+        {% elif flashmsg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            toastr.error('{{ flashmsg }}');
+        {% endif %}
+
+    </script>
+{% endfor %}
+{% block javascript%}{% endblock javascript%}
+</body>
+</html>

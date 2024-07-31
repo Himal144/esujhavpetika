@@ -1,0 +1,28 @@
+{% extends 'organization/base.html' %}
+{% load static%}
+{% block content %}
+<style>
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        gap:5px;
+    }
+</style>
+<div class="container col-md-6 mt-5 px-5 mx-4">
+    <h2 class="text-center">Multi-Department Registration</h2>
+    <div id="department-forms-container">
+        <!-- Department forms will be added here -->
+    </div>
+    <div class="button-group">
+        <button class="btn btn-info w-100 mt-2" id="add-department-button">Add Department</button>
+        <button class="btn btn-success w-100 mt-2" id="register-button">Register</button>
+        <button type="button" class="btn btn-secondary w-100 mt-2" id="cancel-button">Cancel</button>
+    </div>
+</div>
+<div class="col-md-6">
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'organization/js/multi_department.js' %}"></script>
+{% endblock javascript%}

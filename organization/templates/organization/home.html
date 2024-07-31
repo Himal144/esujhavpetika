@@ -1,0 +1,20 @@
+{% extends 'organization/base.html' %}
+{% load static%}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/home.css' %}" />
+    {% endblock css %}
+    {% block content %}
+{% if request.user.is_authenticated %}
+{% block sidebar%}
+{% include "organization/sidebar.html" %}
+{% endblock sidebar%}
+{% block main-content%}
+{% include "organization/home_content.html" %}
+{% endblock main-content%}
+
+{% else %}
+{% include "organization/home_content.html" %}
+{% endif %}
+{% endblock content %}
+

@@ -1,0 +1,76 @@
+
+{% extends 'organization/base.html' %}
+{% load static%}
+{% block content %}
+{% block sidebar%}
+{% include "organization/sidebar.html" %}
+{% endblock sidebar%}
+{% block main-content%}
+
+<div class="col-md-9 main-content">
+    <div class="card my-5 gradient-card">
+        <div class="card-body">
+            <h3 class="card-title text-center"><b>{{ organization.name }}</b></h3>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="logo">
+                        <img src="{{ logo_url.url }}" alt="Logo" />
+                    </div>
+                    <h5 class="mt-5">Username: <strong>{{ username }}</strong></h5>
+                    <h6>Joined in: {{ joined_date }}</h6>
+                </div>
+                <div class="qr-code-container">
+                    <div id="qr-code" class='qr-code'></div>
+                    <button class="btn btn-sm btn-primary mt-4 w-100" id="qr-download-btn">
+                        <i class="fa-solid fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+            {% if child_organization %}
+            <h3 class="card-title text-center"><strong>Departments</Departments></h3>
+            {% for child in child_organization %}
+            <div class=" card child-organization-card mb-4">
+                <h4 class="card-title text-center mt-3"><strong>{{child.name}}</strong></h4>
+                        <div class="d-flex flex-wrap justify-content-between">
+                            <div class='mx-5' >
+                                <div class="logo">
+                                    <img src="{{ child.child_logo_url }}" alt="Logo" />
+                                </div>
+                                <h5 class="mt-5 my-2">Username: <strong>{{ child.username }}</strong></h5>
+                                <h6>Joined in: {{ child.joined_date }}</h6>
+                            </div>
+                        <div class="qr-code-container my-3 mx-3">
+                        <div id="qr-code-{{ forloop.counter }}" class='qr-code'></div>
+                        <button class="btn btn-sm btn-primary mt-2 w-100 qr-download-btn" data-counter="{{ forloop.counter }}">
+                                <i class="fa-solid fa-download"></i> Download
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock main-content%}
+{% endblock content %}
+
+{% block javascript%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script>
+    const url = "{{organization_url }}";
+    var childOrganizations=null;
+    const organization = "{{ organization.name }}";
+</script>
+{% if child_organizations %}
+<script>
+ childOrganizations = JSON.parse('{{ child_organizations|escapejs|safe }}');
+</script>
+{% endif %}
+</script>
+<script src="{% static "organization/js/organization_detail.js"%}"></script>
+
+{% endblock javascript%}

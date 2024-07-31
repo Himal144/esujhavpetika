@@ -1,0 +1,23 @@
+.logo-edit{
+    margin-top: 13px;
+    height: 130px;
+    width: 130px;
+}
+.edit a{
+    cursor: pointer;
+    text-decoration: none;
+}
+.profile-picture{
+    font-size: 22px;
+}
+.setting{
+    background-color: #f8f9fa;
+   
+}
+.logo-edit img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: solid black 1px;
+}

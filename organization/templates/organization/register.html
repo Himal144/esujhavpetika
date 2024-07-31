@@ -1,0 +1,44 @@
+{% extends 'organization/base.html' %}
+{% load static%}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4 py-4 border shadow border-r">
+        <h3 class="text-center mt-4"> Register Form</h3>
+        <form id="registerForm" action="" method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            {{ organization_register_form.name }} 
+          </div>
+          <div class="mb-3">
+            {{ organization_register_form.logo }} 
+            <div class="text-danger">{{ organization_register_form.logo.errors|striptags }}</div>
+          </div>
+          <div class="mb-3">
+            {{ organization_register_form.authenticated_sender.label_tag }} 
+            {{ organization_register_form.authenticated_sender }} 
+          </div>
+          
+          <!-- Department type dropdown -->
+          <div class="mb-3">
+              <label for="dropdown">Department type:</label>
+              <select id="dropdown" name="dropdown">
+                <option value="Single">Single</option>
+                <option value="Multiple">Multiple</option>
+              </select>
+          </div>
+          
+          <div class="text-center mt-3">
+            <input type="submit" class="btn btn-success w-100" value="Register" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock content %}
+{% block javascript %}
+<script src="{% static 'organization/js/register.js' %}"></script>
+{% endblock javascript%}

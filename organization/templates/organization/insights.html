@@ -1,0 +1,155 @@
+{% extends 'organization/base.html' %}
+{% load static %}
+{% block content %}
+{% block sidebar %}
+{% include "organization/sidebar.html" %}
+{% endblock sidebar %}
+{% block main-content %}
+<div class="col-md-9 main-content">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-6 mb-3">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Bar Chart</h5>
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Pie Chart</h5>
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <div class="statistics">
+          <div class="card gradient-card">
+            <div class="card-body">
+              <h5 class="card-title text-primary">Double Bar Chart</h5>
+              <canvas id="doubleBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main-content %}
+{% endblock content %}
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+  var statistics = JSON.parse('{{ statistics|escapejs|safe }}');
+  var doubleStatistics = JSON.parse('{{ double_statistics|escapejs|safe }}');
+
+  var barCtx = document.getElementById('barChart').getContext('2d');
+  var barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+          labels: statistics.labels,
+          datasets: [{
+              label: 'Suggestions',
+              data: statistics.values,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+
+  var pieCtx = document.getElementById('pieChart').getContext('2d');
+  var pieChart = new Chart(pieCtx, {
+      type: 'pie',
+      data: {
+          labels: statistics.labels,
+          datasets: [{
+              data: statistics.values,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              datalabels: {
+                  formatter: (value, ctx) => {
+                      let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                      let percentage = (value * 100 / sum).toFixed(2) + "%";
+                      return percentage;
+                  },
+                  color: '#fffff',
+              }
+          }
+      },
+      plugins: [ChartDataLabels]
+  });
+
+  var doubleBarCtx = document.getElementById('doubleBarChart').getContext('2d');
+  var doubleBarChart = new Chart(doubleBarCtx, {
+      type: 'bar',
+      data: {
+          labels: doubleStatistics.labels,
+          datasets: [
+              {
+                  label: 'Total Feedback',
+                  data: doubleStatistics.value_a,
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+              },
+              {
+                  label: 'Solved Feedback',
+                  data: doubleStatistics.value_b,
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+              }
+          ]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          },
+          animation: {
+            duration: 1000,
+            easing: 'easeInOutBounce'
+        }
+      }
+  });
+</script>
+{% endblock javascript %}

@@ -1,0 +1,155 @@
+{% load custom_filters %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'organization/css/feedback.css' %}" />
+{% endblock css %}
+
+<div class="col-md-6 col-sm-12 main-content">
+    <div class="overview my-3 mx-2">
+        <div class="card gradient-card">
+            <div class="card-body">
+                <h5 class="card-title">Overview</h5>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <div class="problems-container">
+                        <h6 class="mb-0">Problems</h6>
+                        <p class="mb-0">{{ problems_count }}</p>
+                    </div>
+                    <div class="solved-container">
+                        <h6 class="mb-0">Solved</h6>
+                        <p class="mb-0 ">{{ solved_count }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="latest-suggestion">
+        <div class="card gradient-card my-5 mx-2">
+            <div class="card-body">
+                <h5 class="card-title">Latest Suggestion</h5>
+                <hr>
+                {% if latest_suggestion %}
+                {% for latest_suggestion in latest_suggestion %}
+                <div class="d-flex justify-content-between suggestion-container feedback-item px-2 py-1 border border-r "  data-feedback-id="{{latest_suggestion.id}}">
+                    <div class="suggestion-info">
+                        {% if latest_suggestion.forward_from   %}
+                <p><strong> From {{ latest_suggestion.forward_from }}</strong></p>
+                        {% endif %}
+                        <p>{{ latest_suggestion.feedback }}</p>
+                        <small>By:{{ latest_suggestion.user }}</small>
+                        <small class="mx-4">{{ latest_suggestion.time|custom_timesince }}</small>
+                    </div>
+                    <div class="dropdown">
+                        <i class="fas fa-ellipsis-h dropdown-icon"></i>
+                        <div class="dropdown-content">
+                            <a  class="dropdown-item" dropdown-clicked-id="0">Solved</a>
+                            <a  class="dropdown-item" dropdown-clicked-id="1">Unable to solve</a>
+                            {% if  not suggestion_box_status%}
+                            <a  class="dropdown-item" dropdown-clicked-id="2">Forward</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+                {% else %}
+                <p class="text-center"><strong>No Latest suggestion.</strong></p>
+                <p class="text-center">
+                    {% if suggestion_box_status %}
+                    Suggestion will appear here if any department forward the suggestion to you or somebody send suggestion.
+                    {% else %}
+                    Suggestion will appear here if somebody sends the suggestion.
+                    {% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-3 right-sidebar">
+    <div class="frequent-suggestions my-3 mx-2">
+        <div class="card gradient-card">
+            <div class="card-body">
+                <h5 class="card-title text-center">Frequent Suggestions</h5>
+                <hr>
+                {% if frequent_suggestions %}
+                <ul class="list-group">
+                    {% for suggestion in frequent_suggestions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <p>{{ suggestion.topic }}</p>
+                         
+                            <small>{{ suggestion.latest_time|custom_timesince }}</small>
+                        </div>
+                        <span class="text-success">{{ suggestion.count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-center"><strong>No frequent suggestion.</strong></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="statistics mt-3">
+        <div class="card gradient-card my-3 mx-2">
+            <div class="card-body">
+                <h5 class="card-title">Statistics</h5>
+                <hr>
+                <canvas id="statisticsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Provide your response</h2>
+        <p>Type your message:</p>
+        <textarea id="feedbackMessage" rows="4" cols="50"></textarea>
+        <button id="submitFeedback" class="mt-3">Submit</button>
+    </div>
+</div>
+
+{% block javascript %}
+<script src="{% static 'organization/js/feedback.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Assuming the statistics data is passed to the template as JSON
+    const statistics = {
+        labels: {{ statistics.labels|safe }},
+        values: {{ statistics.values|safe }}
+    };
+
+    // Access the canvas element
+    const ctx = document.getElementById('statisticsChart').getContext('2d');
+
+    // Create the chart
+    const statisticsChart = new Chart(ctx, {
+        type: 'bar', // or 'line', 'pie', etc.
+        data: {
+            labels: statistics.labels,
+            datasets: [{
+                label: 'Number of Suggestions',
+                data: statistics.values,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock javascript %}

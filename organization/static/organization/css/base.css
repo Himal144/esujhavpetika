@@ -1,0 +1,13 @@
+.logo{
+    height: 90px;
+    width: 90px;
+
+}
+
+.logo img {
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+      
+}
