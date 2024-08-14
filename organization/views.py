@@ -157,6 +157,8 @@ def feedback(request):
             child_organization_id=Organization.objects.filter(parent_id=parent_organization.id).values_list('id', flat=True)
         
             forward_feedback_id=Forward.objects.filter(organization_id__in=child_organization_id).values_list('feedback_id', flat=True)
+
+            similar_id=Similarity.objects.filter().values_list('similar_feedback_id',flat=True)
             
             feedback_objs=Feedback.objects.filter(id__in=forward_feedback_id,status=None)
             if feedback_objs.exists():
@@ -178,16 +180,18 @@ def feedback(request):
                         feedback_context[organization_name] = feedback_list
 
             #Code for the suggestion send by the parent organization qr
+            similar_id=Similarity.objects.filter().values_list('similar_feedback_id',flat=True).exclude(similar_feedback_id__isnull=True)
             feedbacks_by_topic = Feedback.objects.filter(organization_id=organization) \
                                                 .values('topic_id') \
                                                 .annotate(feedback_count=Count('id')) \
-                                                .order_by('-feedback_count')
+                                                .order_by('-feedback_count') \
+                                                .exclude(id__in=similar_id)
             if feedbacks_by_topic.exists():
                    
                     for topic_feedback in feedbacks_by_topic:
                         topic_id = topic_feedback['topic_id']
                         topic_name = Topic.objects.get(id=topic_id).topic
-                        feedbacks = Feedback.objects.filter(organization_id=organization, topic_id=topic_id,status=None)
+                        feedbacks = Feedback.objects.filter(organization_id=organization, topic_id=topic_id,status=None).exclude(id__in=similar_id)
                         feedback_list = []
                         forward_feedback_list=[]
                         for feedback in feedbacks:
@@ -207,16 +211,19 @@ def feedback(request):
         else:
             #Code for the child organization
             if (organization):
+
+                similar_id=Similarity.objects.filter().values_list('similar_feedback_id',flat=True).exclude(similar_feedback_id__isnull=True)
                 feedbacks_by_topic = Feedback.objects.filter(organization_id=organization) \
                                                 .values('topic_id') \
                                                 .annotate(feedback_count=Count('id')) \
-                                                .order_by('-feedback_count')
+                                                .order_by('-feedback_count')\
+                                                .exclude(id__in=similar_id)
                 if feedbacks_by_topic.exists():
                     feedback_context={}
                     for topic_feedback in feedbacks_by_topic:
                         topic_id = topic_feedback['topic_id']
                         topic_name = Topic.objects.get(id=topic_id).topic
-                        feedbacks = Feedback.objects.filter(organization_id=organization, topic_id=topic_id,status=None)
+                        feedbacks = Feedback.objects.filter(organization_id=organization, topic_id=topic_id,status=None).exclude(id__in=similar_id)
                         feedback_list = []
                         forward_feedback_list=[]
                         for feedback in feedbacks:
@@ -257,7 +264,6 @@ def handle_feedback_action(request):
         try:
             data = json.loads(request.body)
             feedback_id = data.get('feedback_id')
-            print(feedback_id)
             dropdown_clicked_id = int(data.get('dropdown_clicked_id'))
             response_message = data.get('response')
             #Code to handle the solved of the problem
@@ -556,7 +562,6 @@ def dashboard(request):
                         "id":latest_feedback.id
                     }
                 latest_suggestion_list.append(suggestion)
-        print(latest_suggestion_list)
         #Code for the frequent suggestion            
 
         feedbacks_by_topic = feedback_obj \
@@ -581,6 +586,7 @@ def dashboard(request):
         
         weeks = [start_of_week - timedelta(weeks=i) for i in range(4)]
         week_labels = [f"Week {i+1}" for i in range(4)]
+        feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
         week_counts = [
             feedback_obj.filter(date__gte=weeks[i], date__lt=weeks[i] + timedelta(weeks=1)).count()
             for i in range(4)
@@ -637,16 +643,16 @@ def dashboard(request):
                     "latest_time":latest_time_obj.date
                 }
                 frequent_suggestions.append(suggestion)
-           
-        feedbacks_by_week = feedback_obj.annotate(week=TruncWeek('date')).values('week').annotate(count=Count('id')).order_by('week') 
+                
         today = timezone.now()
         start_of_week = today - timedelta(days=today.weekday())
         
         weeks = [start_of_week - timedelta(weeks=i) for i in range(4)]
         week_labels = [f"Week {i+1}" for i in range(4)]
+        feedback_obj=Feedback.objects.filter(organization_id=organization_obj)
         week_counts = [
-    feedback_obj.filter(date__gte=weeks[i], date__lt=weeks[i] + timedelta(days=7)).count()
-    for i in range(4)
+        feedback_obj.filter(date__gte=weeks[i], date__lt=weeks[i] + timedelta(days=7)).count()
+        for i in range(4)
 ]
         
         statistics = {
@@ -909,5 +915,28 @@ def password_change_done(request):
 #Function for the qr_code rendering 
 def get_organization_qr_templates(request):
     return render(request,'organization/organization_qr.html')
+
+
+
+#Function for the similarity feedback rendering
+@csrf_exempt
+def get_similar_feedback(request):
+    if request.method=="POST":
+        data = json.loads(request.body)
+        feedback_id = data.get('feedback_id')
+        similar_feedback_ids=Similarity.objects.filter(feedback_id=feedback_id).values_list("similar_feedback_id",flat=True)
+        similar_feedback_objs=Feedback.objects.filter(id__in=similar_feedback_ids)
+        similar_feedbacks=[]
+        for similar_feedbck_obj in similar_feedback_objs:
+            sender_obj=Sender.objects.filter(id=similar_feedbck_obj.sender_id.id).first()
+            feedback={
+                "feedback":similar_feedbck_obj.feedback,
+                "date":similar_feedbck_obj.date,
+                "sender":sender_obj.name
+            }
+            similar_feedbacks.append(feedback)
+        return JsonResponse({"similar_feedbacks":similar_feedbacks})   
+        
+        
 
     

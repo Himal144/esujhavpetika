@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdowns = document.querySelectorAll('.dropdown-content');
     let selectedFeedbackId = null;
     let selectedDropdownId = null;
+    let similarFeedbackModal=document.getElementById("similarFeedbackModal")
+    
+    similarFeedbackModal.style.display='none';
 
     dropdownIcons.forEach(icon => {
         icon.addEventListener('click', function(event) {
@@ -117,4 +120,92 @@ document.addEventListener('DOMContentLoaded', function() {
     //     console.error('Error:', error);
     // });
   })
+
+
+//Code for handling the similar suggestion click
+
+ function handleSimilarOthersClicked(event){
+    const feedbackId=selectedFeedbackId = this.closest('.feedback-item').getAttribute('data-feedback-id');
+    requestData={"feedback_id":feedbackId}
+    fetch('/organization/get-similar-feedback/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const similarFeedbacks = data.similar_feedbacks;
+        const modalContent = document.getElementById('similarFeedbackContent');
+        modalContent.innerHTML = '';  // Clear any existing content
+
+        // Build the HTML content for similar feedbacks
+        similarFeedbacks.forEach(feedback => {
+
+           //Function for calsulating the timesince
+
+           function customTimeSince(date) {
+            // Implement your custom logic here
+            var now = new Date();
+            var seconds = Math.floor((now - date) / 1000);
+            
+            var interval = Math.floor(seconds / 31536000);
+            if (interval >= 1) {
+                return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+            }
+            interval = Math.floor(seconds / 2592000);
+            if (interval >= 1) {
+                return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+            }
+            interval = Math.floor(seconds / 86400);
+            if (interval >= 1) {
+                return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+            }
+            interval = Math.floor(seconds / 3600);
+            if (interval >= 1) {
+                return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+            }
+            interval = Math.floor(seconds / 60);
+            if (interval >= 1) {
+                return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+            }
+            return Math.floor(seconds) + " seconds ago";
+        }
+
+        
+        var timeSince = customTimeSince(new Date(feedback.date));
+
+
+            const feedbackHTML = `
+                <div class="similar-feedback-item">
+                <p> ${feedback.feedback}</p>
+                    <p>By: ${feedback.sender}</p>
+                    <p> ${timeSince}</p>
+                    <hr>
+                </div>
+            `;
+            modalContent.innerHTML += feedbackHTML;
+        });
+
+        // Show the Bootstrap modal
+        similarFeedbackModal.style.display='block';
+        document.getElementById("close-similar-feedback-modal").addEventListener("click",()=>{
+            similarFeedbackModal.style.display='none';
+        }
+        )
+    })
+    .catch((error) => {
+        toastr.error(error)
+    });
+    
+
+ }
+
+let othersSpan=document.querySelectorAll('.feedback-others')
+othersSpan.forEach(element=>{
+    element.addEventListener('click',handleSimilarOthersClicked)
+})
+
+
 });

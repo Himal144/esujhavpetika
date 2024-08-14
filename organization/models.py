@@ -36,8 +36,9 @@ class Forward(models.Model):
   
 
 class Similarity(models.Model):
-    feedback_id=models.ForeignKey('Feedback',on_delete=models.CASCADE)
+    feedback_id=models.ForeignKey('Feedback',on_delete=models.CASCADE,related_name='to_whom_it_is_similar')
     sender_id=models.ForeignKey(Sender, on_delete=models.CASCADE)
+    similar_feedback_id=models.ForeignKey('Feedback',on_delete=models.CASCADE,default=None,null=True,related_name='similar_feedback')
 
 
 

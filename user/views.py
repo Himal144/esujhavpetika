@@ -32,9 +32,11 @@ def send_suggestion(request,name,id):
                 email=form.cleaned_data['email']
                 feedback_obj=Feedback()
                 if (name or email):
+                    if not name:
+                        name="Anonymous"
                     sender_obj=Sender.objects.create(name=name,email=email)
                 else:
-                    sender_obj=Sender.objects.create(name="Anonymys",email='')
+                    sender_obj=Sender.objects.create(name="Anonymous",email='')
               
                 if(not id):
                     #Code if the suggestion is not similar with other suggestion
@@ -51,8 +53,15 @@ def send_suggestion(request,name,id):
 
                 else:
                     #code for if the suggestion is similar  with other suggestion
-                    similar_feedback_obj=Feedback.objects.filter(id=id).first() 
-                    Similarity.objects.create(feedback_id=similar_feedback_obj,sender_id=sender_obj)
+                    similar_feedback_obj=Feedback.objects.filter(id=id).first()
+                    feedback_obj.sender_id=sender_obj
+                    feedback_obj.feedback=suggestion
+                    feedback_obj.date=timezone.now()
+                    feedback_obj.organization_id=organization_obj
+                    feedback_obj.topic_id=topic
+                    feedback_obj.status=None
+                    feedback_obj.save() 
+                    Similarity.objects.create(feedback_id=similar_feedback_obj,sender_id=sender_obj,similar_feedback_id=feedback_obj)
                     messages.success(request,"Suggestion send successfully.")
                     return JsonResponse({'success': True,})
                 # Save the suggestion

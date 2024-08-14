@@ -31,5 +31,6 @@ urlpatterns = [
     path('account/settings/',views.account_settings,name='account_settings'),
     path('account/settings/edit-account/',views.edit_account,name='edit_account'),
     path('account/password_change/', auth_views.PasswordChangeView.as_view(form_class=MyPasswordChangeForm), name='password_change'),
-    path('account/password_change/done/', views.password_change_done, name='password_change_done')
+    path('account/password_change/done/', views.password_change_done, name='password_change_done'),
+    path('get-similar-feedback/',views.get_similar_feedback,name="get_similar_feedback")
     ]

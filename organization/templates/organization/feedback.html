@@ -54,9 +54,30 @@
         <button id="submitFeedback" class="mt-3">Submit</button>
     </div>
 </div>
+
+
+
+{% comment %} Modal for the similar feedback  {% endcomment %}
+
+<div class="modal" id="similarFeedbackModal" >
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="similarFeedbackModalLabel">Similar Feedbacks</h5>
+                <span class="close" id="close-similar-feedback-modal"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+            <div class="modal-body" id="similarFeedbackContent">
+                <!-- Similar feedback content will be inserted here -->
+            </div>
+        </div>
+    </div>
 </div>
+
+</div>
+
 {% endblock main-content%}
 {% endblock content %}
 {% block javascript %}
+
 <script src="{% static 'organization/js/feedback.js' %}"></script>
 {% endblock javascript%}
