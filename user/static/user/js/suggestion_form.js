@@ -15,15 +15,24 @@ $(document).ready(function() {
     
         let filteredTopics = topics.filter(topic => topic.topic.toLowerCase().includes(query));
     
-        if (filteredTopics.length > 0) {
-            filteredTopics.forEach(function(topic) {
+        // Limit the number of suggestions displayed to 2
+        let displayTopics = filteredTopics.slice(0, 2);
+        
+        if (displayTopics.length > 0) {
+            displayTopics.forEach(function(topic) {
                 suggestions.append('<div class="suggestion-item">' + topic.topic + '</div>');
             });
         }
     
         // Show the query itself as the last suggestion
         suggestions.append('<div class="suggestion-item">' + query + '</div>');
-        suggestions.show();
+    
+        // Only show the suggestions box if there are suggestions
+        if (filteredTopics.length > 0) {
+            suggestions.show();
+        } else {
+            suggestions.hide();
+        }
     });
     
     // Handle item hover and selection
