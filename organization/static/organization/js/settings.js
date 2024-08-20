@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Smooth scroll and show content on clicking a nav link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(event) {
-            event.preventDefault();
+            // event.preventDefault();
 
             // Hide all sections
             const settingContentContainer = document.getElementById('setting-content-container');
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Code for the edit account
     document.getElementById('edit-account').addEventListener("click", async (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const settingContentContainer = document.getElementById('setting-content-container');
         Array.from(settingContentContainer.children).forEach(child => {
             child.style.display = "none";
@@ -67,13 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById("submit-edit").addEventListener("click", (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         document.getElementById("edit-account-form").submit();
     });
 
     // Code for the delete account
     document.getElementById('delete-account').addEventListener("click", (event) => {
-        event.preventDefault();
+        // event.preventDefault();
         const settingContentContainer = document.getElementById('setting-content-container');
         Array.from(settingContentContainer.children).forEach(child => {
             child.style.display = "none";

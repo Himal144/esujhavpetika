@@ -17,6 +17,10 @@
     color: #333;
     padding: 10px;
 }
+.nav-item :hover {
+    background: linear-gradient(90deg, rgb(139, 139, 139),rgb(177, 175, 175),white);
+    color: #fff;
+}
 
 .nav-item .nav-link.active {
     background: linear-gradient(90deg, #007bff, #78ade9, #ffffff);
