@@ -34,24 +34,14 @@
 
     #sidebarToggle {
         display: block;
-        margin: 10px;
+       
     }
 
     .main-content {
-        margin-left: 0;
-    }
-}
-
-@media (min-width: 769px) {
-    #sidebarToggle {
-        display: none;
-    }
-
-    .main-content {
-        margin-left: 250px;
+        margin-left: 0!important;
         padding: 20px;
         overflow-x: hidden;
-        margin-top: 58px;
+        margin-top: 0px!important;
     }
 }
 
@@ -59,6 +49,7 @@
     padding: 20px;
     overflow-x: hidden;
     margin-top: 58px;
+    margin-left: 250px;
 }
 
  

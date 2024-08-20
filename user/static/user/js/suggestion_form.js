@@ -9,30 +9,46 @@ closeModal.onclick = function() {
 $(document).ready(function() {
     // Function to filter topics and show suggestions  
     $('#suggestionTopic').on('input', function() {
-       
         let query = $(this).val().toLowerCase();
         let suggestions = $('#suggestions');
         suggestions.empty();
-
+    
         let filteredTopics = topics.filter(topic => topic.topic.toLowerCase().includes(query));
-
+    
         if (filteredTopics.length > 0) {
             filteredTopics.forEach(function(topic) {
                 suggestions.append('<div class="suggestion-item">' + topic.topic + '</div>');
             });
         }
-
+    
         // Show the query itself as the last suggestion
         suggestions.append('<div class="suggestion-item">' + query + '</div>');
         suggestions.show();
     });
-    // Function to handle suggestion click
-    $(document).on('click', '#suggestions div', function() {
-
-        $('#id_topic').val($(this).text());
+    
+    // Handle item hover and selection
+    $(document).on('mouseover', '.suggestion-item', function() {
+        $('.suggestion-item').removeClass('selected');
+        $(this).addClass('selected');
+    });
+    
+    $(document).on('mouseout', '.suggestion-item', function() {
+        $(this).removeClass('selected');
+    });
+    
+    // Handle item click
+    $(document).on('click', '.suggestion-item', function() {
+        $('#suggestionTopic').val($(this).text());
         $('#suggestions').hide();
     });
-
+    
+    // Hide suggestions when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#suggestionTopic, #suggestions').length) {
+            $('#suggestions').hide();
+        }
+    });
+    
     // Function to handle form submission
 $("#submitSuggestion").on('click', async function(event){
     event.preventDefault();

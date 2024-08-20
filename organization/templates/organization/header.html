@@ -13,9 +13,10 @@
             padding: 10px 20px;
             display: flex;
             align-items: center;
-            position:fixed;
-            width:100%;
-            z-index:1;  
+            position: fixed;
+            width: 100%;
+            z-index: 1;
+            box-sizing: border-box;
         }
         .header .logo-container {
             display: flex;
@@ -37,6 +38,24 @@
         .header a {
             text-decoration: none;
         }
+
+        
+        @media (max-width: 442px) {
+            .header .logo-text {
+                font-size: 18px;  
+            }
+            .header .right-section .btn {
+                font-size: 12px;  
+                padding: 5px 10px;  
+            }
+            .header .right-section i {
+                font-size: 1.5rem;  
+            }
+            .header img {
+                height: 20px; /* Adjust logo image height */
+                width: 30px; /* Adjust logo image width */
+            }
+        }
     </style>
 </head>
 <body>
@@ -47,7 +66,9 @@
         </a>
         {% if request.user.is_authenticated %}
         <div class="right-section">
-           <a href="{% url 'organization_detail'%}"> <i class="fa-solid fa-qrcode fa-2xl text-primary mr-4"></i></a>
+            <a href="{% url 'organization_detail' %}">
+                <i class="fa-solid fa-qrcode fa-2xl text-primary mr-4"></i>
+            </a>
             {% if suggestion_box_status == True %}
             <a href="{% url 'multi_department' %}">
                 <button type="button" class="btn btn-primary">Add department</button>

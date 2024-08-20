@@ -1,4 +1,48 @@
-/* Modal styles */
+/* Ensure the topic field's container is positioned relative */
+.form-container div {
+    position: relative;
+}
+
+/* Suggestions box styles */
+.suggestions-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    top: 100%; /* Directly below the input field */
+    left: 0;
+}
+
+/* Style for each suggestion item */
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background-color: rgb(233, 232, 232);
+    color: #333; /* Darker text color on hover */
+}
+
+.suggestions-box .selected {
+    background-color: rgb(224, 221, 221);
+    color: #333; /* Darker text color on selection */
+}
+
+/* Ensure the input field is displayed correctly */
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
 body {
     font-family: Arial, sans-serif;
 }
@@ -202,10 +246,59 @@ button {
  .form-container{
     width: 400px;
     
- }
+ }@media (max-width: 500px) {
+    .feedback-container {
+        padding: 10px; /* Reduced padding for smaller screens */
+    }
+
+    .modal-content {
+        width: 90%; /* Adjust width for better fit */
+        padding: 20px; /* Reduced padding */
+    }
+
+    .form-container {
+        width: calc(100% - 20px); /* Adjust width to account for increased margin */
+        margin: 10px; /* Increased margin to make the border visible */
+        padding: 10px; /* Adjust padding */
+        border: 1px solid #ccc; /* Ensure border is visible */
+        box-sizing: border-box; /* Include border and padding in width */
+    }
+    
+    .suggestion-section {
+        width: calc(100% - 20px); /* Adjust width to match form container */
+        margin: 10px; /* Increased margin to match form container */
+    }
+
+    .dropdown-content {
+        max-height: 150px; /* Adjust dropdown max height */
+    }
+
+    .qr-code {
+        max-width: 100px; /* Adjust QR code size */
+        max-height: 100px; /* Adjust QR code size */
+    }
+    
+    .feedback-item {
+        padding: 8px; /* Adjust padding */
+        font-size: 14px; /* Adjust font size */
+    }
+    
+    .feedback-item span,
+    .feedback-meta,
+    .feedback-time,
+    .feedback-others {
+        font-size: 0.8em; /* Adjust font size */
+    }
+
+    button {
+        padding: 8px 16px; /* Adjust button padding */
+        font-size: 14px; /* Adjust font size */
+    }
+}
 
 
-    .suggestions-dropdown {
+
+    /* .suggestions-dropdown {
         display: none;
         border: 1px solid #ccc;
         border-top: none;
@@ -222,3 +315,5 @@ button {
     .suggestions-dropdown div:hover {
         background-color: #f0f0f0;
     }
+
+     */

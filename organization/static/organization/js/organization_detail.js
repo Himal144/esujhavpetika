@@ -3,8 +3,8 @@
 // Generate QR code for the main organization
 new QRCode(document.getElementById("qr-code"), {
     text: url,
-    width: 150,
-    height: 150,
+    width: 140,
+    height: 140,
 });
 
 //Code for downloading the qr of child when child login and parent qr when parent login
@@ -35,6 +35,27 @@ document.querySelector('#qr-download-btn').addEventListener('click', function ()
                 .catch(error => console.error('Error loading template:', error));
         }
     });
+    // Adjust QR code canvas size dynamically based on container
+function resizeQrCodeCanvas() {
+    const qrCodeContainers = document.querySelectorAll('.qr-code');
+    qrCodeContainers.forEach(container => {
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+            // Adjust canvas width based on container size
+            const containerWidth = container.clientWidth;
+            if (containerWidth < 140) {
+                canvas.style.width = `${containerWidth}px`;
+                canvas.style.height = `${containerWidth}px`;
+            }
+        }
+    });
+}
+
+// Call the resize function after the QR codes are generated
+resizeQrCodeCanvas();
+
+// Add an event listener to resize the canvas on window resize
+window.addEventListener('resize', resizeQrCodeCanvas);
 
 
 
@@ -51,8 +72,8 @@ if (childOrganizations!=null) {
         const qrCodeContainer = document.getElementById(`qr-code-${index + 1}`);
         new QRCode(qrCodeContainer, {
             text: child.url,
-            width: 150,
-            height: 150,
+            width: 140,
+            height: 140,
         });
     });
 

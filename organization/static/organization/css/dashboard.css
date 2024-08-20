@@ -20,8 +20,6 @@ body {
 }
  
 
-   
-
 .main-content, .right-sidebar {
     padding: 7px;
     margin-top:58px;
@@ -161,3 +159,4 @@ body {
     border-top: 1px solid #e0e0e0;
     margin: 2px 0;
 }
+

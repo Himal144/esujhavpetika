@@ -10,7 +10,7 @@ from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 # from .profanity_check import check_profanity
-from .semantic_similarity import check_semantic_similarity,store_vector_of_suggestion 
+# from .semantic_similarity import check_semantic_similarity,store_vector_of_suggestion 
 
 
 def send_suggestion(request,name,id):
@@ -27,7 +27,7 @@ def send_suggestion(request,name,id):
                 topic, created = Topic.objects.get_or_create(topic=topic_name, defaults={'organization_id': organization_obj})
                 suggestion=form.cleaned_data['suggestion']
     #Sending the suggestion to check the semantic similarity
-                id=check_semantic_similarity(suggestion)
+                # id=check_semantic_similarity(suggestion)
                 name=form.cleaned_data['name']
                 email=form.cleaned_data['email']
                 feedback_obj=Feedback()
@@ -47,7 +47,7 @@ def send_suggestion(request,name,id):
                     feedback_obj.topic_id=topic
                     feedback_obj.status=None
                     feedback_obj.save()
-                    store_vector_of_suggestion(feedback_obj.id,suggestion)
+                    # store_vector_of_suggestion(feedback_obj.id,suggestion)
                     messages.success(request,"Suggestion send successfully.")
                     return JsonResponse({'success': True,})
 
@@ -87,7 +87,7 @@ def send_suggestion(request,name,id):
 
 
 #Code for checking the profanity 
-from better_profanity import profanity
+# from better_profanity import profanity
 import json
 @csrf_exempt
 def check_profane(request):
@@ -95,8 +95,8 @@ def check_profane(request):
         try:
             data = json.loads(request.body)
             suggestion = data.get('suggestion', '')
-            profane_result= profanity.contains_profanity(suggestion)
-            return JsonResponse({'success':profane_result})
+            # profane_result= profanity.contains_profanity(suggestion)
+            # return JsonResponse({'success':profane_result})
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)    

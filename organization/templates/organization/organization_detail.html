@@ -1,14 +1,78 @@
-
 {% extends 'organization/base.html' %}
-{% load static%}
+{% load static %}
 {% block content %}
-{% block sidebar%}
+{% block sidebar %}
 {% include "organization/sidebar.html" %}
-{% endblock sidebar%}
-{% block main-content%}
+{% endblock sidebar %}
+{% block main-content %}
+<style>
+    @media (max-width: 420px) {
+        .card-title {
+            font-size: 1.2rem; /* Slightly increase the title size */
+        }
+
+        .gradient-card {
+            margin-top: 0px;
+            padding: 0.5rem;
+        }
+
+        h5, h6 {
+            margin-top: 0px !important;
+            font-size: 0.9rem; /* Slightly increase the h5 and h6 font sizes */
+        }
+
+        .btn {
+            font-size: 0.8rem; /* Slightly increase button text size */
+            padding: 0.3rem 0.5rem; /* Adjust button padding */
+            margin-top: 6px; /* Adjust margin */
+        }
+
+        .qr-code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Full width of the parent container */
+            max-width: 100%; /* Ensures it doesn't exceed the container */
+        }
+
+        .qr-code canvas {
+            max-width: 100%; /* Ensure the canvas scales down */
+            height: auto; /* Maintain aspect ratio */
+        }
+        .logo{
+            left:50% !important;
+        }
+
+        .logo img {
+            width: 100; /* Slightly increase the logo size */
+            height: 100%%;
+        }
+
+        .child-organization-card {
+            padding: 1rem; /* Slightly increase padding for child organization cards */
+        }
+
+        .qr-download-btn {
+            font-size: 0.8rem; /* Slightly increase the download button size */
+            margin-top: 6px; /* Adjust margin */
+        }
+
+        .d-flex {
+            flex-direction: column;
+            align-items: center;
+            width: 100%; /* Ensure full width */
+        }
+
+        .logo, .qr-code-container {
+            max-width: 100%;
+            text-align: center;
+        }
+    }
+</style>
 
 <div class="col-md-9 main-content">
-    <div class="card my-5 gradient-card">
+    <div class="card my-1 gradient-card">
         <div class="card-body">
             <h3 class="card-title text-center"><b>{{ organization.name }}</b></h3>
             <div class="d-flex justify-content-between">
@@ -16,7 +80,7 @@
                     <div class="logo">
                         <img src="{{ logo_url.url }}" alt="Logo" />
                     </div>
-                    <h5 class="mt-5">Username: <strong>{{ username }}</strong></h5>
+                    <h5 class="mt-4">Username: <strong>{{ username }}</strong></h5>
                     <h6>Joined in: {{ joined_date }}</h6>
                 </div>
                 <div class="qr-code-container">
@@ -27,50 +91,47 @@
                 </div>
             </div>
             {% if child_organization %}
-            <h3 class="card-title text-center"><strong>Departments</Departments></h3>
+            <h3 class="card-title mt-3 text-center"><strong>Departments</strong></h3>
             {% for child in child_organization %}
-            <div class=" card child-organization-card mb-4">
-                <h4 class="card-title text-center mt-3"><strong>{{child.name}}</strong></h4>
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <div class='mx-5' >
-                                <div class="logo">
-                                    <img src="{{ child.child_logo_url }}" alt="Logo" />
-                                </div>
-                                <h5 class="mt-5 my-2">Username: <strong>{{ child.username }}</strong></h5>
-                                <h6>Joined in: {{ child.joined_date }}</h6>
-                            </div>
-                        <div class="qr-code-container my-3 mx-3">
+            <div class="card child-organization-card mb-4">
+                <h4 class="card-title text-center mt-3"><strong>{{ child.name }}</strong></h4>
+                <div class="d-flex flex-wrap justify-content-between">
+                    <div class='mx-3'>
+                        <div class="logo">
+                            <img src="{{ child.child_logo_url }}" alt="Logo" />
+                        </div>
+                        <h5 class="mt-5 my-2">Username: <strong>{{ child.username }}</strong></h5>
+                        <h6>Joined in: {{ child.joined_date }}</h6>
+                    </div>
+                    <div class="qr-code-container my-3 mx-3">
                         <div id="qr-code-{{ forloop.counter }}" class='qr-code'></div>
                         <button class="btn btn-sm btn-primary mt-2 w-100 qr-download-btn" data-counter="{{ forloop.counter }}">
-                                <i class="fa-solid fa-download"></i> Download
-                            </button>
-                        </div>
-                        </div>
+                            <i class="fa-solid fa-download"></i> Download
+                        </button>
                     </div>
-                {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
             {% endif %}
         </div>
     </div>
 </div>
-{% endblock main-content%}
+{% endblock main-content %}
 {% endblock content %}
 
-{% block javascript%}
+{% block javascript %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
-    const url = "{{organization_url }}";
-    var childOrganizations=null;
+    const url = "{{ organization_url }}";
+    var childOrganizations = null;
     const organization = "{{ organization.name }}";
-</script>
-{% if child_organizations %}
-<script>
- childOrganizations = JSON.parse('{{ child_organizations|escapejs|safe }}');
-</script>
-{% endif %}
-</script>
-<script src="{% static "organization/js/organization_detail.js"%}"></script>
 
-{% endblock javascript%}
+    {% if child_organizations %}
+    childOrganizations = JSON.parse('{{ child_organizations|escapejs|safe }}');
+    {% endif %}
+</script>
+<script src="{% static 'organization/js/organization_detail.js' %}"></script>
+{% endblock javascript %}
