@@ -297,23 +297,4 @@ button {
 }
 
 
-
-    /* .suggestions-dropdown {
-        display: none;
-        border: 1px solid #ccc;
-        border-top: none;
-        max-height: 200px;
-        overflow-y: auto;
-        position: absolute;
-        z-index: 1000;
-        background-color: white;
-    }
-    .suggestions-dropdown div {
-        padding: 10px;
-        cursor: pointer;
-    }
-    .suggestions-dropdown div:hover {
-        background-color: #f0f0f0;
-    }
-
-     */
+ 

@@ -10,30 +10,31 @@
 }
 
 .sidebar.collapsed {
-    display: none; /* Hide sidebar when collapsed */
+    display: none;  
 }
 
 .nav-item .nav-link {
     color: #333;
     padding: 10px;
 }
-.nav-item :hover {
-    background: linear-gradient(90deg, rgb(139, 139, 139),rgb(177, 175, 175),white);
-    color: #fff;
+.nav-item:hover {
+    background: linear-gradient(90deg, rgb(139, 139, 139), rgb(177, 175, 175), white);
+    border-radius: 3.5px 0 0 3.5px;
 }
 
 .nav-item .nav-link.active {
     background: linear-gradient(90deg, #007bff, #78ade9, #ffffff);
     color: #fff;
+    border-radius: 3.5px 0 0 3.5px;
 }
 
 @media (max-width: 768px) {
     .sidebar {
-        display: block; /* Sidebar is part of the normal flow */
-        width: 100%; /* Full width on small screens */
-        position: relative; /* Remove fixed positioning */
-        top: auto; /* Reset top positioning */
-        left: auto; /* Reset left positioning */
+        display: block; 
+        width: 100%;  
+        position: relative; 
+        top: auto;  
+        left: auto;  
     }
 
     #sidebarToggle {

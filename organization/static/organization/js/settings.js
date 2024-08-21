@@ -5,6 +5,26 @@ document.addEventListener('DOMContentLoaded', () => {
         element.style.display = "none";
     });
 
+
+   
+        const navLinks = document.querySelectorAll('.nav-link');
+    
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                
+    
+                // Remove the 'active' class from all links
+                navLinks.forEach(link => link.classList.remove('active'));
+    
+                // Add the 'active' class to the clicked link
+                this.classList.add('active');
+    
+                // Your existing code to handle content display goes here...
+            });
+        });
+    
+    
+
     // Smooth scroll and show content on clicking a nav link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(event) {
