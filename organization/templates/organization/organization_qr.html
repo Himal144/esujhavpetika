@@ -1,19 +1,130 @@
-<!-- qr-template.html -->
-<div id="pdf-content">
-    <div style="font-size: 16px; text-align: center; margin-bottom: 20px; margin-top:20px;">
-        Your feedback drives change. Every suggestion matters.
+<style>
+    .outer-circle {
+        position: relative;
+        width: 480px; /* Outer circle radius */
+        height: 480px;
+        border-radius: 50%;
+        background-color: #ffffff; /* White background inside the outer circle */
+        border: 2px solid #1a73e8; /* Blue border around the outer circle */
+        margin: 0 auto;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .inner-circle {
+        width: 400px; /* Inner circle radius */
+        height: 400px;
+        border-radius: 50%;
+        background-color: #1a73e8; /* Blue background inside the inner circle */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px; /* Padding for content spacing */
+        position: relative; /* Positioning context for absolute elements */
+    }
+    
+    #pdf-content {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        width: 340px; /* Adjusted width for better fit */
+        margin: 0 auto;
+        padding: 10px; /* Padding for content spacing */
+        color: #ffffff; /* White text for contrast */
+    }
+    
+    .header-text {
+        font-size: 18px; /* Adjusted font size */
+        margin-bottom: 15px; /* Reduced margin for better fit */
+        margin-top: 15px;
+    }
+    
+    #org-name {
+        font-size: 20px; /* Adjusted font size */
+        margin-bottom: 10px;
+    }
+    
+    .qr-code img {
+        width: 180px; /* Size for better visibility */
+        height: 180px;
+        margin: 10px;
+        border: 3px solid #1a73e8; /* Blue border around QR code */
+        padding: 10px;
+        background-color: #ffffff; /* White background for QR code */
+    }
+    
+    #org-message {
+        font-size: 14px; /* Adjusted font size */
+        margin-bottom: 7px; /* Reduced margin for better fit */
+    }
+    
+    .footer-text {
+        font-size: 14px; /* Adjusted font size */
+        color: blue; /* Blue text color */
+        background-color: white; /* White background color */
+        padding: 5px; /* Padding for spacing */
+        border-radius: 5px; /* Rounded corners */
+        margin: 10px 0; /* Vertical margin */
+    }
+    
+    .curved-text {
+        position: absolute;
+        top: -10px; /* Adjust position as needed */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+    }
+
+    .curved-text-lower {
+        position: absolute;
+        bottom: -25px; /* Adjust position as needed */
+        left: 50%;
+        transform: translateX(-50%) rotate(180deg); /* Rotate the text to make it upright */
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div class="outer-circle mt-5 py-5">
+    <div class="curved-text">
+        <svg width="480px" height="480px" viewBox="0 0 480 480">
+            <path id="upper-curve" d="M 40,240 A 200,200 0 1,1 440,240" fill="transparent"/>
+            <text width="500">
+                <textPath href="#upper-curve" startOffset="50%" text-anchor="middle" fill="#1a73e8" font-size="24px" font-weight="bold">
+                    www.esujhavpetika.com
+                </textPath>
+            </text>
+        </svg>
     </div>
-    <h3 style="text-align:center;"><span id="org-name"></span><h3>
-    <div class="logo " style="margin-left:50px;">
-        <img src="{{ logo_url.url }}" alt="Logo"  />
+
+    <div class="curved-text-lower" style="margin-top:10px;">
+        <svg width="480px" height="480px" viewBox="0 0 480 480">
+            <path id="lower-curve" d="M 440,240 A 200,200 0 0,0 40,240" fill="transparent"/>
+            <text width="500">
+                <textPath href="#lower-curve" startOffset="50%" text-anchor="middle" fill="#1a73e8" font-size="24px" font-weight="bold">
+                    Digital Suggestion Box
+                </textPath>
+            </text>
+        </svg>
     </div>
-    <div style="text-align: center;">
-        <img id="qr-code-img" src="" style="width: 200px; height: 200px;" />
-    </div>
-    <div id="org-message" style="font-size: 12px; margin-bottom: 20px; text-align: center;">
-        Welcome to the digital sujhavpetika of <span id="org-name"></span>. Please scan the below QR code to send the suggestion.
-    </div>
-    <div style="font-size: 12px; margin-top: 20px; text-align: center;">
-        Organization name will only be shared.
+
+    <div class="inner-circle ">
+        <div id="pdf-content">
+            <h3 id="org-name"></h3>
+            <div class="qr-code">
+                <img id="qr-code-img" src="" alt="QR Code" />
+            </div>
+            <div id="org-message">
+                <b>SCAN FOR FEEDBACK</b>
+            </div>
+            <span class="footer-text">
+                www.eshujhavpetika.com
+            </span>
+            <div>
+                <span>Forms are available on request </span>
+            </div>   
+        </div>
     </div>
 </div>
