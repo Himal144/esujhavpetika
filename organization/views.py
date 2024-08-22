@@ -917,7 +917,6 @@ def get_organization_qr_templates(request):
     return render(request,'organization/organization_qr.html')
 
 
-
 #Function for the similarity feedback rendering
 @csrf_exempt
 def get_similar_feedback(request):

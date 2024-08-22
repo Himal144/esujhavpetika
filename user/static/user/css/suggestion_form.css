@@ -2,6 +2,9 @@
 .form-container div {
     position: relative;
 }
+header{
+    margin-top: 0px!important;
+}
 
 /* Suggestions box styles */
 .suggestions-box {
@@ -245,8 +248,10 @@ button {
  }
  .form-container{
     width: 400px;
+    margin-top: 58px;
     
- }@media (max-width: 500px) {
+ }
+ @media (max-width: 500px) {
     .feedback-container {
         padding: 10px; /* Reduced padding for smaller screens */
     }

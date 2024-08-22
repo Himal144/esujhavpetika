@@ -1,0 +1,82 @@
+{% extends 'organization/base.html' %}
+{% load static %}
+{% block css %}
+ 
+<style>
+    .site-footer {
+        width: 100%;
+        margin-left: 118px !important;
+    }
+
+    .privacy-policy {
+        background-color: #f9f9f9;
+        padding: 30px 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 58px !important;
+    }
+
+    .privacy-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 100%; /* Ensures it takes the full width */
+    }
+
+    .privacy-container h3 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .privacy-container ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .privacy-container ul li {
+        font-size: 16px;
+        color: #555;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .privacy-container ul li:last-child {
+        border-bottom: none;
+    }
+
+    .privacy-container ul li i {
+        color: #007bff;
+        margin-right: 10px;
+    }
+</style>
+{% endblock css %}
+{% block content %}
+
+<section class="privacy-policy">
+    <div class="privacy-container">
+        <h3>Privacy Policy</h3>
+        <ul>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                If you send a suggestion similar to another, they will be counted as one.
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                Our system detects profane words, and if detected, it will restrict the ability to send feedback.
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                If you provide your email, you will receive notifications when the issue is resolved.
+            </li>
+            <li>
+                <i class="fas fa-check-circle"></i>
+                Our system only detects English and Nepali. Suggestions in other languages won't be processed.
+            </li>
+        </ul>
+    </div>
+</section>
+{% endblock content %}

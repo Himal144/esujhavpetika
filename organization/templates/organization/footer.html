@@ -1,0 +1,43 @@
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'organization/css/footer.css' %}" />
+{% endblock css %}
+{% block content %}
+<footer class="site-footer mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>About Us</h5>
+                <p>Your go-to platform for sharing suggestions and feedback. We value your input and strive to make our service better for everyone.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}"> Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href=" "> Home</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact Us</h5>
+                <p>Email: <a href="mail.google.com">eshujhavpetika@gmail.com</a></p>
+                <p>Phone: 9865358249</p>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.twitter.com">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p>&copy; 2024 Eshujhav Petika. All Rights Reserved.</p>
+    </div>
+</footer>
+{% endblock content %}

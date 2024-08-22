@@ -12,6 +12,8 @@ from django.contrib import messages
 # from .profanity_check import check_profanity
 # from .semantic_similarity import check_semantic_similarity,store_vector_of_suggestion 
 
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
 
 def send_suggestion(request,name,id):
     try:
