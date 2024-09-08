@@ -3,9 +3,9 @@
 **esujhavpetika** is an AI-powered digital solution to traditional suggestion boxes. The platform includes profane word detection and semantic analysis of suggestions to ensure efficient and meaningful feedback collection.
 
 ### Contributors
+- [Himal144](https://github.com/Himal144)
 - [JRGautam123](https://github.com/JRGautam123)
 - [gauravsbd](https://github.com/gauravsbd)
-- [Himal144](https://github.com/Himal144)
 
 ### Features
 - **AI-Powered Profane Word Detection**: Automatically filters out inappropriate content in suggestions.
