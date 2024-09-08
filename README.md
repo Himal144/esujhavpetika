@@ -1,21 +1,23 @@
-# esujhavpetika
-This is the official repository of the esujhavpetika 
-<br>
-This project is the solution of traditional suggestion box with the AI powered Profane word and semantic meaning of the suggestion detection.
-<br>
- JRGautam123, gauravsbd and Himal144 are  contributors for this project.
+<h2>Esujhavpetika</h2>
 
- <br>
- NLP_files for this project is not uploaded here you can find those files in another repository called NLP_files you have to place this in the same directory as manage.py file.
+**esujhavpetika** is an AI-powered digital solution to traditional suggestion boxes. The platform includes profane word detection and semantic analysis of suggestions to ensure efficient and meaningful feedback collection.
 
- <br>
-Dependencies module for this project are given in the requirements.txt files.
+### Contributors
+- [JRGautam123](https://github.com/JRGautam123)
+- [gauravsbd](https://github.com/gauravsbd)
+- [Himal144](https://github.com/Himal144)
 
-<br>
-This project currently supports the Nepali and English language
-<br>
-This project use the Google API for detecting and translating the language.So be sure to include the credentials in the credentials.json file and update the code as needed.
+### Features
+- **AI-Powered Profane Word Detection**: Automatically filters out inappropriate content in suggestions.
+- **Semantic Similarity Detection**: Identifies similar feedback items to prevent duplicate suggestions.
+- **Language Support**: The platform currently supports **Nepali** and **English** languages.
+- **Google API Integration**: The system uses Google APIs for language detection and translation. Make sure to include your credentials in the `credentials.json` file and update the code accordingly.
+  
+### NLP Files
+The Natural Language Processing (NLP) models used in this project are not included in this repository. You can find them in a separate repository called **NLP_files**. Please place the `NLP_files` directory in the same location as your `manage.py` file.
 
+### Installation and Dependencies
+The project dependencies are listed in the `requirements.txt` file.
 
 <h2>Outout</h2>
 <br>
