@@ -11,6 +11,11 @@ This project is the solution of traditional suggestion box with the AI powered P
  <br>
 Dependencies module for this project are given in the requirements.txt files.
 
+<br>
+This project currently supports the Nepali and English language
+<br>
+This project use the Google API for detecting and translating the language.So be sure to include the credentials in the credentials.json file and update the code as needed.
+
 
 <h2>Outout</h2>
 <br>
